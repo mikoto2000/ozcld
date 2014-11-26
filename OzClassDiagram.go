@@ -1,4 +1,4 @@
-package cld
+package ozcld
 
 import (
 	"strings"
@@ -181,7 +181,7 @@ func CreateRelation(name string, relationType RelationType, fromClassName string
 
 // 関係の種類
 const (
-	RELATION_NORMAL = iota
+	RELATION_NORMAL RelationType = iota
 	RELATION_INHERIT
 	RELATION_IMPLEMENT
 	RELATION_AGGREGATION
