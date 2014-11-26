@@ -34,7 +34,7 @@ func getFieldsDefs() []string {
 	return []string{"- f1 : string", "- f2 : string", "- f3 : string"}
 }
 
-func getFields() cld.Fields {
+func getFields() *cld.Fields {
 	return cld.CreateFieldsFromStrings(getFieldsDefs())
 }
 
@@ -67,7 +67,7 @@ func getMethodsDefs() []string {
 	return []string{"- m1() : string", "- m2() : string", "- m3() : string"}
 }
 
-func getMethods() cld.Methods {
+func getMethods() *cld.Methods {
 	return cld.CreateMethodsFromStrings(getMethodsDefs())
 }
 
@@ -100,7 +100,7 @@ func TestMain(t *testing.T) {
 }
 
 func TestNamespace(t *testing.T) {
-	namespace := cld.CreateNamespace("TestNamespace", []cld.Class{
+	namespace := cld.CreateNamespace("TestNamespace", []*cld.Class{
 		cld.CreateClassFromDefs("", "TestClass1", getFieldsDefs(), getMethodsDefs()),
 		cld.CreateClassFromDefs("", "TestClass2", getFieldsDefs(), getMethodsDefs())})
 

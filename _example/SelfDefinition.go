@@ -85,7 +85,7 @@ func main() {
 		nil)
 
 	// 関連(エッジ)
-	relations := []cld.Relation{
+	relations := []*cld.Relation{
 		cld.CreateRelation("",
 			cld.RELATION_IMPLEMENT,
 			"Field",
@@ -140,7 +140,7 @@ func main() {
 	cd := cld.CreateClassDiagram(
 		"SelfDefinitionClassDiagram",
 		nil,
-		[]cld.Class{canToDotInterface, field, fields, method, methods, class, namespace, classDiagram, relation},
+		[]*cld.Class{canToDotInterface, field, fields, method, methods, class, namespace, classDiagram, relation},
 		relations)
 
 	fmt.Println(cd.ToDot())

@@ -16,8 +16,8 @@ type Field struct {
 }
 
 // フィールドを作成する
-func CreateFieldFromString(def string) Field {
-	return Field{def}
+func CreateFieldFromString(def string) *Field {
+	return &Field{def}
 }
 
 // Dot 形式の文字列を返却する
@@ -27,13 +27,13 @@ func (this *Field) ToDot() string {
 
 // フィールドリスト
 type Fields struct {
-	fields []Field
+	fields []*Field
 }
 
 // フィールドリストを作成する
-func CreateFieldsFromStrings(defs []string) Fields {
+func CreateFieldsFromStrings(defs []string) *Fields {
 	// 必要な長さのスライスを作成
-	fields := make([]Field, len(defs))
+	fields := make([]*Field, len(defs))
 
 	// スライスにフィールド定義を格納
 	for i, v := range defs {
@@ -41,7 +41,7 @@ func CreateFieldsFromStrings(defs []string) Fields {
 	}
 
 	// Fields 返却
-	return Fields{fields}
+	return &Fields{fields}
 }
 
 // Dot 形式の文字列を返却する
@@ -64,8 +64,8 @@ type Method struct {
 }
 
 // メソッドを作成する
-func CreateMethodFromString(def string) Method {
-	return Method{def}
+func CreateMethodFromString(def string) *Method {
+	return &Method{def}
 }
 
 // Dot 形式の文字列を返却する
@@ -75,13 +75,13 @@ func (this *Method) ToDot() string {
 
 // メソッドリスト
 type Methods struct {
-	methods []Method
+	methods []*Method
 }
 
 // メソッドリストを作成する
-func CreateMethodsFromStrings(defs []string) Methods {
+func CreateMethodsFromStrings(defs []string) *Methods {
 	// 必要な長さのスライスを作成
-	methods := make([]Method, len(defs))
+	methods := make([]*Method, len(defs))
 
 	// スライスにフィールド定義を格納
 	for i, v := range defs {
@@ -89,7 +89,7 @@ func CreateMethodsFromStrings(defs []string) Methods {
 	}
 
 	// Methods 返却
-	return Methods{methods}
+	return &Methods{methods}
 }
 
 // Dot 形式の文字列を返却する
@@ -110,15 +110,15 @@ func (this *Methods) ToDot() string {
 type Class struct {
 	stereotype string
 	name       string
-	fields     Fields
-	methods    Methods
+	fields     *Fields
+	methods    *Methods
 }
 
 // 文字列からクラスを作成する
-func CreateClassFromDefs(stereotype string, name string, fieldDefs []string, methodDefs []string) Class {
+func CreateClassFromDefs(stereotype string, name string, fieldDefs []string, methodDefs []string) *Class {
 	fields := CreateFieldsFromStrings(fieldDefs)
 	methods := CreateMethodsFromStrings(methodDefs)
-	return Class{stereotype, name, fields, methods}
+	return &Class{stereotype, name, fields, methods}
 }
 
 // Dot 形式の文字列を返却する
@@ -139,12 +139,12 @@ func (this *Class) ToDot() string {
 // 名前空間(パッケージ)
 type Namespace struct {
 	name    string
-	classes []Class
+	classes []*Class
 }
 
 // Namespace を作成する
-func CreateNamespace(name string, classes []Class) Namespace {
-	return Namespace{name, classes}
+func CreateNamespace(name string, classes []*Class) *Namespace {
+	return &Namespace{name, classes}
 }
 
 // Dot 形式の文字列を返却する
@@ -175,8 +175,8 @@ type Relation struct {
 }
 
 // Relation を作成する
-func CreateRelation(name string, relationType RelationType, fromClassName string, toClassName string, fromMultiplicity string, toMultiplicity string) Relation {
-	return Relation{name, relationType, fromClassName, toClassName, fromMultiplicity, toMultiplicity}
+func CreateRelation(name string, relationType RelationType, fromClassName string, toClassName string, fromMultiplicity string, toMultiplicity string) *Relation {
+	return &Relation{name, relationType, fromClassName, toClassName, fromMultiplicity, toMultiplicity}
 }
 
 // 関係の種類
@@ -247,14 +247,14 @@ func (this *Relation) ToDot() string {
 // クラス図
 type ClassDiagram struct {
 	name       string
-	namespaces []Namespace
-	classes    []Class
-	relations  []Relation
+	namespaces []*Namespace
+	classes    []*Class
+	relations  []*Relation
 }
 
 // クラス図作成
-func CreateClassDiagram(name string, namespaces []Namespace, classes []Class, relations []Relation) ClassDiagram {
-	return ClassDiagram{name, namespaces, classes, relations}
+func CreateClassDiagram(name string, namespaces []*Namespace, classes []*Class, relations []*Relation) *ClassDiagram {
+	return &ClassDiagram{name, namespaces, classes, relations}
 }
 
 // Dot 形式の文字列を返却する
