@@ -21,7 +21,7 @@ func CreateFieldFromString(def string) Field {
 }
 
 // Dot 形式の文字列を返却する
-func (this Field) ToDot() string {
+func (this *Field) ToDot() string {
 	return this.field + "\\l"
 }
 
@@ -45,7 +45,7 @@ func CreateFieldsFromStrings(defs []string) Fields {
 }
 
 // Dot 形式の文字列を返却する
-func (this Fields) ToDot() string {
+func (this *Fields) ToDot() string {
 	// 必要な長さのスライスを作成
 	defs := make([]string, len(this.fields))
 
@@ -69,7 +69,7 @@ func CreateMethodFromString(def string) Method {
 }
 
 // Dot 形式の文字列を返却する
-func (this Method) ToDot() string {
+func (this *Method) ToDot() string {
 	return this.method + "\\l"
 }
 
@@ -93,7 +93,7 @@ func CreateMethodsFromStrings(defs []string) Methods {
 }
 
 // Dot 形式の文字列を返却する
-func (this Methods) ToDot() string {
+func (this *Methods) ToDot() string {
 	// 必要な長さのスライスを作成
 	defs := make([]string, len(this.methods))
 
@@ -122,7 +122,7 @@ func CreateClassFromDefs(stereotype string, name string, fieldDefs []string, met
 }
 
 // Dot 形式の文字列を返却する
-func (this Class) ToDot() string {
+func (this *Class) ToDot() string {
 	// 必要な長さのスライスを作成
 	defs := []string{this.name, " [label = \"{"}
 
@@ -148,7 +148,7 @@ func CreateNamespace(name string, classes []Class) Namespace {
 }
 
 // Dot 形式の文字列を返却する
-func (this Namespace) ToDot() string {
+func (this *Namespace) ToDot() string {
 	defs := []string{"subgraph cluster_" + this.name + " {"}
 
 	defs = append(defs, "label = \""+this.name+"\";")
@@ -188,7 +188,7 @@ const (
 	RELATION_COMPOSITION
 )
 
-func (this Relation) getEdgeStyles() (style string, arrowhead string) {
+func (this *Relation) getEdgeStyles() (style string, arrowhead string) {
 
 	if this.relationType == RELATION_INHERIT {
 		style = "solid"
@@ -208,7 +208,7 @@ func (this Relation) getEdgeStyles() (style string, arrowhead string) {
 }
 
 // Dot 形式の文字列を返却する
-func (this Relation) ToDot() string {
+func (this *Relation) ToDot() string {
 
 	style, arrowhead := this.getEdgeStyles()
 
@@ -258,7 +258,7 @@ func CreateClassDiagram(name string, namespaces []Namespace, classes []Class, re
 }
 
 // Dot 形式の文字列を返却する
-func (this ClassDiagram) ToDot() string {
+func (this *ClassDiagram) ToDot() string {
 
 	defs := []string{"digraph " + this.name + " {\nnode [shape = record];\n"}
 
