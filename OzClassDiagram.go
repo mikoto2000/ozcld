@@ -44,6 +44,10 @@ func CreateFieldsFromStrings(defs []string) *Fields {
 	return &Fields{fields}
 }
 
+func (this *Fields) Add(field *Field) {
+	this.fields = append(this.fields, field)
+}
+
 // Dot 形式の文字列を返却する
 func (this *Fields) ToDot() string {
 	// 必要な長さのスライスを作成
