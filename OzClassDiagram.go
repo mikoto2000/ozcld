@@ -44,6 +44,7 @@ func CreateFieldsFromStrings(defs []string) *Fields {
 	return &Fields{fields}
 }
 
+// Field を追加
 func (this *Fields) Add(field *Field) {
 	this.fields = append(this.fields, field)
 }
@@ -96,6 +97,11 @@ func CreateMethodsFromStrings(defs []string) *Methods {
 	return &Methods{methods}
 }
 
+// Method を追加
+func (this *Methods) Add(method *Method) {
+	this.methods = append(this.methods, method)
+}
+
 // Dot 形式の文字列を返却する
 func (this *Methods) ToDot() string {
 	// 必要な長さのスライスを作成
@@ -140,6 +146,18 @@ func (this *Class) ToDot() string {
 	return strings.Join(defs, "")
 }
 
+// Field を追加
+func (this *Class) AddFieldFromString(def string) {
+	field := CreateFieldFromString(def)
+	this.fields.Add(field)
+}
+
+// Method を追加
+func (this *Class) AddMethodFromString(def string) {
+	method := CreateMethodFromString(def)
+	this.methods.Add(method)
+}
+
 // 名前空間(パッケージ)
 type Namespace struct {
 	name    string
@@ -164,6 +182,11 @@ func (this *Namespace) ToDot() string {
 	defs = append(defs, "}")
 
 	return strings.Join(defs, "\n")
+}
+
+// Class を追加
+func (this *Namespace) AddClass(class *Class) {
+	this.classes = append(this.classes, class)
 }
 
 type RelationType int
@@ -281,4 +304,19 @@ func (this *ClassDiagram) ToDot() string {
 	defs = append(defs, "}")
 
 	return strings.Join(defs, "\n")
+}
+
+// Class を追加
+func (this *ClassDiagram) AddClass(class *Class) {
+	this.classes = append(this.classes, class)
+}
+
+// Namespace を追加
+func (this *ClassDiagram) AddNamespace(ns *Namespace) {
+	this.namespaces = append(this.namespaces, ns)
+}
+
+// Relation を追加
+func (this *ClassDiagram) AddRelation(relation *Relation) {
+	this.relations = append(this.relations, relation)
 }
