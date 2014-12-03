@@ -162,11 +162,12 @@ func (this *Class) AddMethodFromString(def string) {
 type Namespace struct {
 	name    string
 	classes []*Class
+	namespaces []*Namespace
 }
 
 // Namespace を作成する
-func CreateNamespace(name string, classes []*Class) *Namespace {
-	return &Namespace{name, classes}
+func CreateNamespace(name string, classes []*Class, namespaces []*Namespace) *Namespace {
+	return &Namespace{name, classes, namespaces}
 }
 
 // Dot 形式の文字列を返却する
@@ -174,6 +175,10 @@ func (this *Namespace) ToDot() string {
 	defs := []string{"subgraph cluster_" + this.name + " {"}
 
 	defs = append(defs, "label = \""+this.name+"\";")
+
+	for _, v := range this.namespaces {
+		defs = append(defs, v.ToDot())
+	}
 
 	for _, v := range this.classes {
 		defs = append(defs, v.ToDot())
@@ -187,6 +192,11 @@ func (this *Namespace) ToDot() string {
 // Class を追加
 func (this *Namespace) AddClass(class *Class) {
 	this.classes = append(this.classes, class)
+}
+
+// Namespace を追加
+func (this *Namespace) AddNamespace(namespace *Namespace) {
+	this.namespaces = append(this.namespaces, namespace)
 }
 
 type RelationType int
