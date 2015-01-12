@@ -1,4 +1,10 @@
 classdiagram SelfDefinition {
+    namespace TestOuterNamespace{
+        aaa
+    }
     class TestClass {
+        <<Interface>>
+            ==
+            ==
     }
 }

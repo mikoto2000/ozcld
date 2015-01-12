@@ -3,6 +3,7 @@ package main
 
 import (
     cld "../../ozcld"
+    "fmt"
     "github.com/k0kubun/pp"
     "os"
     "text/scanner"
@@ -24,12 +25,13 @@ type Token struct {
 %union{
     classDiagram *cld.ClassDiagram
     class *cld.Class
+    namespace *cld.Namespace
     word Token
-//    words []Token
+    words []Token
 }
 
 // 単語の繰り返し
-//%type<words> words
+%type<words> words
 
 // 単語
 %token<word> WORD
@@ -37,31 +39,69 @@ type Token struct {
 
 %type<classDiagram> classDiagram
 %type<class> class
+%type<namespace> namespace
 
 %token<word> LABEL_CLD
 %token<word> LABEL_CLASS
+%token<word> LABEL_NAMESPACE
 %token<word> START_BLOCK
 %token<word> END_BLOCK
 
 %%
 
 classDiagram
-    : LABEL_CLD WORD START_BLOCK class END_BLOCK
+    : LABEL_CLD WORD START_BLOCK namespace class END_BLOCK
     {
-        classes := []*cld.Class{$4}
-        $$ = cld.CreateClassDiagram($2.Literal, nil, classes, nil)
+        pp.Println("classDiagram")
+
+        namespaces := []*cld.Namespace{$4}
+        classes := []*cld.Class{$5}
+
+        $$ = cld.CreateClassDiagram($2.Literal, namespaces, classes, nil)
 
         yylex.(*Lexer).Result = $$
     }
 
+classDiagramItem
+    : namespace
+    | class
+
 class
-    : LABEL_CLASS WORD START_BLOCK END_BLOCK
+    : LABEL_CLASS WORD START_BLOCK words END_BLOCK
     {
+        pp.Println("class")
+
         $$ = cld.CreateClassFromDefs("", $2.Literal, nil, nil)
 
         yylex.(*Lexer).Result = $$
     }
 
+namespace
+    : LABEL_NAMESPACE WORD START_BLOCK words END_BLOCK
+    {
+        pp.Println("namespace")
+
+        $$ = cld.CreateNamespace($2.Literal, nil, nil)
+
+        yylex.(*Lexer).Result = $$
+    }
+
+// 単語(WORD)の繰り返しルール
+words
+    : WORD {
+        tokens := []Token{$1}
+
+        $$ = tokens
+
+        yylex.(*Lexer).Result = $$
+    }
+    | words WORD {
+        tokens := append($1, $2)
+
+        $$ = tokens
+
+        yylex.(*Lexer).Result = $$
+    }
 %%
 
 // yyLexer インタフェースを実装したオブジェクトを作成する。
@@ -86,6 +126,8 @@ func (l *Lexer) Lex(lval *yySymType) int {
         token = LABEL_CLD
     } else if l.TokenText() == "class" {
         token = LABEL_CLASS
+    } else if l.TokenText() == "namespace" {
+        token = LABEL_NAMESPACE
     } else if l.TokenText() == "{" {
         token = START_BLOCK
     } else if l.TokenText() == "}" {
@@ -123,4 +165,6 @@ func main() {
     // パース結果表示
     // こういう使い方すると、もう l って Lexer の範疇超えてる気がするけれどどうなのだろうか？
     pp.Println(l.Result)
+
+    fmt.Println(l.Result.(cld.Dot).ToDot())
 }
