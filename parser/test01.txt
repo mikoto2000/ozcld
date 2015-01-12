@@ -1,3 +1,4 @@
 classdiagram SelfDefinition {
-
+    class TestClass {
+    }
 }

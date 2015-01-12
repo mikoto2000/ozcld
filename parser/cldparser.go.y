@@ -36,22 +36,31 @@ type Token struct {
 
 
 %type<classDiagram> classDiagram
+%type<class> class
 
-%token<word> CLD
-%token<word> CL
+%token<word> LABEL_CLD
+%token<word> LABEL_CLASS
 %token<word> START_BLOCK
 %token<word> END_BLOCK
 
 %%
 
 classDiagram
-    : CLD WORD START_BLOCK END_BLOCK
+    : LABEL_CLD WORD START_BLOCK class END_BLOCK
     {
-        $$ = cld.CreateClassDiagram($2.Literal, nil, nil, nil)
+        classes := []*cld.Class{$4}
+        $$ = cld.CreateClassDiagram($2.Literal, nil, classes, nil)
 
         yylex.(*Lexer).Result = $$
     }
 
+class
+    : LABEL_CLASS WORD START_BLOCK END_BLOCK
+    {
+        $$ = cld.CreateClassFromDefs("", $2.Literal, nil, nil)
+
+        yylex.(*Lexer).Result = $$
+    }
 
 %%
 
@@ -74,7 +83,9 @@ func (l *Lexer) Lex(lval *yySymType) int {
 
     // EOF 以外はすべて WORD
     if l.TokenText() == "classdiagram" {
-        token = CLD
+        token = LABEL_CLD
+    } else if l.TokenText() == "class" {
+        token = LABEL_CLASS
     } else if l.TokenText() == "{" {
         token = START_BLOCK
     } else if l.TokenText() == "}" {
