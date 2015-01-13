@@ -6,8 +6,6 @@ import (
 )
 
 func main() {
-	c := cld.Class{"Class"}
-
 	class := cld.CreateClassFromDefs("", "TestClass", nil, nil)
 
 	class.AddFieldFromString("- FieldTesting1 : string")

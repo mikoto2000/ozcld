@@ -118,6 +118,7 @@ func (this *Methods) ToDot() string {
 
 // クラス
 type Class struct {
+	parent     *Namespace
 	stereotype string
 	name       string
 	fields     *Fields
@@ -128,13 +129,28 @@ type Class struct {
 func CreateClassFromDefs(stereotype string, name string, fieldDefs []string, methodDefs []string) *Class {
 	fields := CreateFieldsFromStrings(fieldDefs)
 	methods := CreateMethodsFromStrings(methodDefs)
-	return &Class{stereotype, name, fields, methods}
+	return &Class{nil, stereotype, name, fields, methods}
+}
+
+// 識別文字列を取得する
+func (this *Class) GetIdent() string {
+	parentIdent := this.GetParentIdent()
+	// 識別子に "." は使えないので "_" に置き換える
+	return parentIdent + "_" + strings.Replace(this.name, ".", "_", -1)
+}
+
+// 親の識別文字列を取得する
+func (this *Class) GetParentIdent() string {
+	if this.parent == nil {
+		return "main"
+	}
+	return this.parent.GetIdent()
 }
 
 // Dot 形式の文字列を返却する
 func (this *Class) ToDot() string {
 	// 必要な長さのスライスを作成
-	defs := []string{this.name, " [label = \"{"}
+	defs := []string{this.GetParentIdent() + "_" + this.name, " [label = \"{"}
 
 	if this.stereotype != "" {
 		defs = append(defs, "\\<\\<", this.stereotype, "\\>\\>\\n")
@@ -160,19 +176,31 @@ func (this *Class) AddMethodFromString(def string) {
 
 // 名前空間(パッケージ)
 type Namespace struct {
-	name    string
-	classes []*Class
+	parent     *Namespace
+	name       string
+	classes    []*Class
 	namespaces []*Namespace
 }
 
 // Namespace を作成する
 func CreateNamespace(name string, classes []*Class, namespaces []*Namespace) *Namespace {
-	return &Namespace{name, classes, namespaces}
+	this := &Namespace{nil, name, classes, namespaces}
+
+	// 各クラスに親 Namespace を設定
+	for _, class := range classes {
+		class.parent = this
+	}
+
+	// 各名前空間にに親 Namespace を設定
+	for _, namespace := range namespaces {
+		namespace.parent = this
+	}
+	return this
 }
 
 // Dot 形式の文字列を返却する
 func (this *Namespace) ToDot() string {
-	defs := []string{"subgraph cluster_" + this.name + " {"}
+	defs := []string{"subgraph cluster_" + this.GetParentIdent() + "_" + this.name + " {"}
 
 	defs = append(defs, "label = \""+this.name+"\";")
 
@@ -189,13 +217,30 @@ func (this *Namespace) ToDot() string {
 	return strings.Join(defs, "\n")
 }
 
+// 識別文字列を取得する
+func (this *Namespace) GetIdent() string {
+	parentIdent := this.GetParentIdent()
+	// 識別子に "." は使えないので "_" に置き換える
+	return parentIdent + "_" + strings.Replace(this.name, ".", "_", -1)
+}
+
+// 親の識別文字列を取得する
+func (this *Namespace) GetParentIdent() string {
+	if this.parent == nil {
+		return "main"
+	}
+	return this.parent.GetIdent()
+}
+
 // Class を追加
 func (this *Namespace) AddClass(class *Class) {
+	class.parent = this
 	this.classes = append(this.classes, class)
 }
 
 // Namespace を追加
 func (this *Namespace) AddNamespace(namespace *Namespace) {
+	namespace.parent = this
 	this.namespaces = append(this.namespaces, namespace)
 }
 
@@ -205,15 +250,15 @@ type RelationType int
 type Relation struct {
 	name             string
 	relationType     RelationType
-	fromClassName    string
-	toClassName      string
+	fromClass        *Class
+	toClass          *Class
 	fromMultiplicity string
 	toMultiplicity   string
 }
 
 // Relation を作成する
-func CreateRelation(name string, relationType RelationType, fromClassName string, toClassName string, fromMultiplicity string, toMultiplicity string) *Relation {
-	return &Relation{name, relationType, fromClassName, toClassName, fromMultiplicity, toMultiplicity}
+func CreateRelation(name string, relationType RelationType, fromClass *Class, toClass *Class, fromMultiplicity string, toMultiplicity string) *Relation {
+	return &Relation{name, relationType, fromClass, toClass, fromMultiplicity, toMultiplicity}
 }
 
 // 関係の種類
@@ -251,7 +296,7 @@ func (this *Relation) ToDot() string {
 
 	// 基本
 	base := []string{"edge [style = \"" + style + "\", arrowhead = \"" + arrowhead + "\"];\n"}
-	base = append(base, this.fromClassName+" -> "+this.toClassName)
+	base = append(base, this.fromClass.GetIdent()+" -> "+this.toClass.GetIdent())
 
 	// 詳細
 	detail := []string{}
