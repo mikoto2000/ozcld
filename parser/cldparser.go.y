@@ -4,7 +4,7 @@ package main
 import (
     cld "../../ozcld"
     "fmt"
-    "github.com/k0kubun/pp"
+//    "github.com/k0kubun/pp"
     "os"
     "text/scanner"
 )
@@ -26,8 +26,8 @@ type Token struct {
     classDiagram *cld.ClassDiagram
     class *cld.Class
     namespace *cld.Namespace
-    word Token
-    words []Token
+    word *Token
+    words []*Token
 }
 
 // 単語の繰り返し
@@ -39,6 +39,8 @@ type Token struct {
 
 %type<classDiagram> classDiagram
 %type<class> class
+%token<word> EQUAL
+%type<word> divisionMarker
 %type<namespace> namespace
 
 %token<word> LABEL_CLD
@@ -52,7 +54,7 @@ type Token struct {
 classDiagram
     : LABEL_CLD WORD START_BLOCK namespace class END_BLOCK
     {
-        pp.Println("classDiagram")
+        //pp.Println("classDiagram")
 
         namespaces := []*cld.Namespace{$4}
         classes := []*cld.Class{$5}
@@ -67,29 +69,50 @@ classDiagramItem
     | class
 
 class
-    : LABEL_CLASS WORD START_BLOCK words END_BLOCK
+    : LABEL_CLASS WORD START_BLOCK words divisionMarker words divisionMarker words END_BLOCK
     {
-        pp.Println("class")
+        //pp.Println("class")
 
-        $$ = cld.CreateClassFromDefs("", $2.Literal, nil, nil)
+        $$ = cld.CreateClassFromDefs(wordsToString($4), $2.Literal, nil, nil)
 
         yylex.(*Lexer).Result = $$
     }
 
-namespace
-    : LABEL_NAMESPACE WORD START_BLOCK words END_BLOCK
-    {
-        pp.Println("namespace")
+divisionMarker
+    : EQUAL EQUAL
 
-        $$ = cld.CreateNamespace($2.Literal, nil, nil)
+namespace
+    : LABEL_NAMESPACE WORD START_BLOCK class END_BLOCK
+    {
+        //pp.Println("namespace")
+
+        $$ = cld.CreateNamespace($2.Literal, []*cld.Class{$4}, nil)
+
+        yylex.(*Lexer).Result = $$
+    }
+    | LABEL_NAMESPACE WORD START_BLOCK class namespace END_BLOCK
+    {
+        //pp.Println("namespace")
+
+        $$ = cld.CreateNamespace($2.Literal, []*cld.Class{$4}, []*cld.Namespace{$5})
 
         yylex.(*Lexer).Result = $$
     }
 
 // 単語(WORD)の繰り返しルール
+// TODO: wors 
 words
-    : WORD {
-        tokens := []Token{$1}
+    :
+    {
+        tokens := []*Token{}
+
+        $$ = tokens
+
+        yylex.(*Lexer).Result = $$
+    }
+    | WORD
+    {
+        tokens := []*Token{$1}
 
         $$ = tokens
 
@@ -119,13 +142,15 @@ type Lexer struct {
 func (l *Lexer) Lex(lval *yySymType) int {
     token := int(l.Scan())
 
-    pp.Println(l.TokenText())
+    //pp.Println(l.TokenText())
 
     // EOF 以外はすべて WORD
     if l.TokenText() == "classdiagram" {
         token = LABEL_CLD
     } else if l.TokenText() == "class" {
         token = LABEL_CLASS
+    } else if l.TokenText() == "=" {
+        token = EQUAL
     } else if l.TokenText() == "namespace" {
         token = LABEL_NAMESPACE
     } else if l.TokenText() == "{" {
@@ -139,7 +164,7 @@ func (l *Lexer) Lex(lval *yySymType) int {
 
     // 解析結果を lval に詰める。
     // WORD を Token 型に変更したので、そのように修正。
-    lval.word = Token{Type: token, Literal: l.TokenText()}
+    lval.word = &Token{Type: token, Literal: l.TokenText()}
 
     // 解釈したトークンの種類を返却する
     return token
@@ -164,7 +189,17 @@ func main() {
 
     // パース結果表示
     // こういう使い方すると、もう l って Lexer の範疇超えてる気がするけれどどうなのだろうか？
-    pp.Println(l.Result)
+    //pp.Println(l.Result)
 
     fmt.Println(l.Result.(cld.Dot).ToDot())
+}
+
+func wordsToString(words []*Token) string {
+    str := ""
+
+    for _, v := range words {
+        str = str + v.Literal
+    }
+
+    return str;
 }

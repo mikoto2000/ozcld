@@ -1,10 +1,25 @@
 classdiagram SelfDefinition {
     namespace TestOuterNamespace{
-        aaa
+        class OuterTestClass {
+                ==
+                aaaa
+                ==
+                bbbb
+        }
+        namespace TestInnerNamespace{
+            class InnerTestClass {
+                    ==
+                    aaaa
+                    ==
+                    bbbb
+            }
+        }
     }
     class TestClass {
-        <<Interface>>
+        Interface
             ==
+            aaaa
             ==
+            bbbb
     }
 }
