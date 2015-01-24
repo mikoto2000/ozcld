@@ -25,7 +25,11 @@ type Token struct {
 %union{
     classDiagram *cld.ClassDiagram
     class *cld.Class
+    classes []*cld.Class
+    fields *cld.Fields
+    methods *cld.Methods
     namespace *cld.Namespace
+    namespaces []*cld.Namespace
     word *Token
     words []*Token
 }
@@ -39,9 +43,15 @@ type Token struct {
 
 %type<classDiagram> classDiagram
 %type<class> class
+%type<classes> classes
+
+%type<fields> fields
+%type<methods> methods
+
 %token<word> EQUAL
 %type<word> divisionMarker
 %type<namespace> namespace
+%type<namespaces> namespaces
 
 %token<word> LABEL_CLD
 %token<word> LABEL_CLASS
@@ -52,12 +62,12 @@ type Token struct {
 %%
 
 classDiagram
-    : LABEL_CLD WORD START_BLOCK namespace class END_BLOCK
+    : LABEL_CLD WORD START_BLOCK namespaces classes END_BLOCK
     {
         //pp.Println("classDiagram")
 
-        namespaces := []*cld.Namespace{$4}
-        classes := []*cld.Class{$5}
+        namespaces := $4
+        classes := $5
 
         $$ = cld.CreateClassDiagram($2.Literal, namespaces, classes, nil)
 
@@ -68,12 +78,68 @@ classDiagramItem
     : namespace
     | class
 
+classes
+    : class
+    {
+        $$ = []*cld.Class{$1}
+    }
+    | classes class
+    {
+        $$ = append($1, $2)
+    }
+
+fields
+    :
+    {
+        $$ = &cld.Fields{}
+    }
+    | words
+    {
+        fields := &cld.Fields{}
+        field := cld.CreateFieldFromString(wordsToString($1))
+        fields.Add(field)
+        $$ = fields
+    }
+    | fields words
+    {
+        field := cld.CreateFieldFromString(wordsToString($2))
+        $1.Add(field)
+        $$ = $1
+    }
+
+methods
+    :
+    {
+        $$ = &cld.Methods{}
+    }
+    | words
+    {
+        methods := &cld.Methods{}
+        method := cld.CreateMethodFromString(wordsToString($1))
+        methods.Add(method)
+        $$ = methods
+    }
+    | methods words
+    {
+        method := cld.CreateMethodFromString(wordsToString($2))
+        $1.Add(method)
+        $$ = $1
+    }
+
 class
-    : LABEL_CLASS WORD START_BLOCK words divisionMarker words divisionMarker words END_BLOCK
+    : LABEL_CLASS WORD START_BLOCK words divisionMarker fields divisionMarker methods END_BLOCK
     {
         //pp.Println("class")
 
-        $$ = cld.CreateClassFromDefs(wordsToString($4), $2.Literal, nil, nil)
+        $$ = cld.CreateClass(wordsToString($4), $2.Literal, $6, $8)
+
+        yylex.(*Lexer).Result = $$
+    }
+    | LABEL_CLASS WORD START_BLOCK divisionMarker fields divisionMarker methods END_BLOCK
+    {
+        //pp.Println("class")
+
+        $$ = cld.CreateClass("", $2.Literal, $5, $7)
 
         yylex.(*Lexer).Result = $$
     }
@@ -81,36 +147,53 @@ class
 divisionMarker
     : EQUAL EQUAL
 
+namespaces
+    : namespace
+    {
+        $$ = []*cld.Namespace{$1}
+    }
+    | namespaces namespace
+    {
+        $$ = append($1, $2)
+    }
+
 namespace
-    : LABEL_NAMESPACE WORD START_BLOCK class END_BLOCK
+    : LABEL_NAMESPACE WORD START_BLOCK END_BLOCK
     {
         //pp.Println("namespace")
 
-        $$ = cld.CreateNamespace($2.Literal, []*cld.Class{$4}, nil)
+        $$ = cld.CreateNamespace($2.Literal, nil, nil)
 
         yylex.(*Lexer).Result = $$
     }
-    | LABEL_NAMESPACE WORD START_BLOCK class namespace END_BLOCK
+    | LABEL_NAMESPACE WORD START_BLOCK classes END_BLOCK
     {
         //pp.Println("namespace")
 
-        $$ = cld.CreateNamespace($2.Literal, []*cld.Class{$4}, []*cld.Namespace{$5})
+        $$ = cld.CreateNamespace($2.Literal, $4, nil)
+
+        yylex.(*Lexer).Result = $$
+    }
+    | LABEL_NAMESPACE WORD START_BLOCK namespaces END_BLOCK
+    {
+        //pp.Println("namespace")
+
+        $$ = cld.CreateNamespace($2.Literal, nil, $4)
+
+        yylex.(*Lexer).Result = $$
+    }
+    | LABEL_NAMESPACE WORD START_BLOCK namespaces classes END_BLOCK
+    {
+        //pp.Println("namespace")
+
+        $$ = cld.CreateNamespace($2.Literal, $5, $4)
 
         yylex.(*Lexer).Result = $$
     }
 
 // 単語(WORD)の繰り返しルール
-// TODO: wors 
 words
-    :
-    {
-        tokens := []*Token{}
-
-        $$ = tokens
-
-        yylex.(*Lexer).Result = $$
-    }
-    | WORD
+    : WORD
     {
         tokens := []*Token{$1}
 
