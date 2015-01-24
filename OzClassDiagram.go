@@ -118,11 +118,16 @@ func (this *Methods) ToDot() string {
 
 // クラス
 type Class struct {
-	parent     *Namespace
-	stereotype string
-	name       string
-	fields     *Fields
-	methods    *Methods
+	Parent     *Namespace
+	Stereotype string
+	Name       string
+	Fields     *Fields
+	Methods    *Methods
+}
+
+// 各オブジェクトからクラスを作成する
+func CreateClass(stereotype string, name string, fields *Fields, methods *Methods) *Class {
+	return &Class{nil, stereotype, name, fields, methods}
 }
 
 // 文字列からクラスを作成する
@@ -136,27 +141,27 @@ func CreateClassFromDefs(stereotype string, name string, fieldDefs []string, met
 func (this *Class) GetIdent() string {
 	parentIdent := this.GetParentIdent()
 	// 識別子に "." は使えないので "_" に置き換える
-	return parentIdent + "_" + strings.Replace(this.name, ".", "_", -1)
+	return parentIdent + "_" + strings.Replace(this.Name, ".", "_", -1)
 }
 
 // 親の識別文字列を取得する
 func (this *Class) GetParentIdent() string {
-	if this.parent == nil {
+	if this.Parent == nil {
 		return "main"
 	}
-	return this.parent.GetIdent()
+	return this.Parent.GetIdent()
 }
 
 // Dot 形式の文字列を返却する
 func (this *Class) ToDot() string {
 	// 必要な長さのスライスを作成
-	defs := []string{this.GetParentIdent() + "_" + this.name, " [label = \"{"}
+	defs := []string{this.GetParentIdent() + "_" + this.Name, " [label = \"{"}
 
-	if this.stereotype != "" {
-		defs = append(defs, "\\<\\<", this.stereotype, "\\>\\>\\n")
+	if this.Stereotype != "" {
+		defs = append(defs, "\\<\\<", this.Stereotype, "\\>\\>\\n")
 	}
 
-	defs = append(defs, this.name, "|", this.fields.ToDot(), "|", this.methods.ToDot(), "}\"];")
+	defs = append(defs, this.Name, "|", this.Fields.ToDot(), "|", this.Methods.ToDot(), "}\"];")
 
 	// 文字列返却
 	return strings.Join(defs, "")
@@ -165,13 +170,13 @@ func (this *Class) ToDot() string {
 // Field を追加
 func (this *Class) AddFieldFromString(def string) {
 	field := CreateFieldFromString(def)
-	this.fields.Add(field)
+	this.Fields.Add(field)
 }
 
 // Method を追加
 func (this *Class) AddMethodFromString(def string) {
 	method := CreateMethodFromString(def)
-	this.methods.Add(method)
+	this.Methods.Add(method)
 }
 
 // 名前空間(パッケージ)
@@ -188,7 +193,7 @@ func CreateNamespace(name string, classes []*Class, namespaces []*Namespace) *Na
 
 	// 各クラスに親 Namespace を設定
 	for _, class := range classes {
-		class.parent = this
+		class.Parent = this
 	}
 
 	// 各名前空間にに親 Namespace を設定
@@ -234,7 +239,7 @@ func (this *Namespace) GetParentIdent() string {
 
 // Class を追加
 func (this *Namespace) AddClass(class *Class) {
-	class.parent = this
+	class.Parent = this
 	this.classes = append(this.classes, class)
 }
 
