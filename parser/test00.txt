@@ -29,6 +29,7 @@ classdiagram SelfDefinition {
     class TestClass2 {
         Interface
             ==
+            aaaa
             ==
             bbbb
     }

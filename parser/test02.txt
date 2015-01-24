@@ -5,14 +5,11 @@ classdiagram SelfDefinition {
         namespace TestInnerNamespace2 {
         }
         class TestClass1 {
-            Interface
                 ==
                 aaaa
                 ==
-                bbbb
         }
         class TestClass2 {
-            Interface
                 ==
                 aaaa
                 ==
@@ -20,14 +17,18 @@ classdiagram SelfDefinition {
         }
     }
     class TestClass1 {
-        Interface
+            ==
+            aaaa
+            ==
+    }
+    class TestClass2 {
             ==
             aaaa
             ==
             bbbb
     }
-    class TestClass2 {
-        Interface
+    class TestInterface {
+            Interface
             ==
             ==
             bbbb
