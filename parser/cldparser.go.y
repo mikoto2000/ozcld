@@ -47,6 +47,8 @@ type Token struct {
 
 %type<fields> fields
 %type<methods> methods
+// end of member
+%token<word> EOM
 
 %token<word> EQUAL
 %type<word> divisionMarker
@@ -93,14 +95,14 @@ fields
     {
         $$ = &cld.Fields{}
     }
-    | words
+    | words EOM
     {
         fields := &cld.Fields{}
         field := cld.CreateFieldFromString(wordsToString($1))
         fields.Add(field)
         $$ = fields
     }
-    | fields words
+    | fields words EOM
     {
         field := cld.CreateFieldFromString(wordsToString($2))
         $1.Add(field)
@@ -112,14 +114,14 @@ methods
     {
         $$ = &cld.Methods{}
     }
-    | words
+    | words EOM
     {
         methods := &cld.Methods{}
         method := cld.CreateMethodFromString(wordsToString($1))
         methods.Add(method)
         $$ = methods
     }
-    | methods words
+    | methods words EOM
     {
         method := cld.CreateMethodFromString(wordsToString($2))
         $1.Add(method)
@@ -240,6 +242,8 @@ func (l *Lexer) Lex(lval *yySymType) int {
         token = START_BLOCK
     } else if l.TokenText() == "}" {
         token = END_BLOCK
+    } else if l.TokenText() == ";" {
+        token = EOM
     } else if token != scanner.EOF {
         // WORD は、yacc 宣言部で書いた token<xxx> のどれか
         token = WORD

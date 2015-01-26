@@ -1,7 +1,7 @@
 all: yacc build run
 
 run: cldparser
-	./cldparser test01.txt
+	./cldparser test04.txt
 
 build: cldparser.go cldparser.go
 	go build -o cldparser cldparser.go

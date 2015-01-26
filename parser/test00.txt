@@ -7,31 +7,31 @@ classdiagram SelfDefinition {
         class TestClass1 {
             Interface
                 ==
-                aaaa
+                aaaa;
                 ==
-                bbbb
+                bbbb;
         }
         class TestClass2 {
             Interface
                 ==
-                aaaa
+                aaaa;
                 ==
-                bbbb
+                bbbb;
         }
     }
     class TestClass1 {
         Interface
             ==
-            aaaa
+            aaaa;
             ==
-            bbbb
+            bbbb;
     }
     class TestClass2 {
         Interface
             ==
-            aaaa
+            aaaa;
             ==
-            bbbb
+            bbbb;
     }
 }
 
