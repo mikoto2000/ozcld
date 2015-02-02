@@ -4,7 +4,7 @@ package main
 import (
     cld "../../ozcld"
     "fmt"
-//    "github.com/k0kubun/pp"
+    "github.com/k0kubun/pp"
     "os"
     "text/scanner"
 )
@@ -61,10 +61,14 @@ type Token struct {
 %token<word> START_BLOCK
 %token<word> END_BLOCK
 
+// 関連
+%token<word> HYPHEN
+%token<word> GT
+
 %%
 
 classDiagram
-    : LABEL_CLD WORD START_BLOCK namespaces classes END_BLOCK
+    : LABEL_CLD WORD START_BLOCK namespaces classes relation END_BLOCK
     {
         //pp.Println("classDiagram")
 
@@ -193,11 +197,38 @@ namespace
         yylex.(*Lexer).Result = $$
     }
 
+relation
+    :
+    {
+    }
+    | words HYPHEN GT words
+    {
+        // ルールが認識されているか、 Print で確認。
+        pp.Println($1)
+        pp.Println($4)
+    }
+
 // 単語(WORD)の繰り返しルール
 words
     : WORD
     {
         tokens := []*Token{$1}
+
+        $$ = tokens
+
+        yylex.(*Lexer).Result = $$
+    }
+    | HYPHEN /* word は、 '-' も許容したいので、こんな感じでルールを追加。 */
+    {
+        tokens := []*Token{$1}
+
+        $$ = tokens
+
+        yylex.(*Lexer).Result = $$
+    }
+    | words HYPHEN /* word は、 '-' も許容したいので、こんな感じでルールを追加。 */
+    {
+        tokens := append($1, $2)
 
         $$ = tokens
 
@@ -244,6 +275,10 @@ func (l *Lexer) Lex(lval *yySymType) int {
         token = END_BLOCK
     } else if l.TokenText() == ";" {
         token = EOM
+    } else if l.TokenText() == "-" {
+        token = HYPHEN
+    } else if l.TokenText() == ">" {
+        token = GT
     } else if token != scanner.EOF {
         // WORD は、yacc 宣言部で書いた token<xxx> のどれか
         token = WORD
