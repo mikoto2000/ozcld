@@ -206,10 +206,6 @@ relation
     }
     | words HYPHEN GT words
     {
-        // ルールが認識されているか、 Print で確認。
-        pp.Println($1)
-        pp.Println($4)
-
         $$ = cld.CreateRelation("", cld.RELATION_NORMAL, wordsToString($1), wordsToString($4), "", "")
     }
 
