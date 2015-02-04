@@ -30,6 +30,7 @@ type Token struct {
     methods *cld.Methods
     namespace *cld.Namespace
     namespaces []*cld.Namespace
+    relation *cld.Relation
     word *Token
     words []*Token
 }
@@ -55,6 +56,8 @@ type Token struct {
 %type<namespace> namespace
 %type<namespaces> namespaces
 
+%type<relation> relation
+
 %token<word> LABEL_CLD
 %token<word> LABEL_CLASS
 %token<word> LABEL_NAMESPACE
@@ -75,7 +78,7 @@ classDiagram
         namespaces := $4
         classes := $5
 
-        $$ = cld.CreateClassDiagram($2.Literal, namespaces, classes, nil)
+        $$ = cld.CreateClassDiagram($2.Literal, namespaces, classes, []*cld.Relation{$6})
 
         yylex.(*Lexer).Result = $$
     }
@@ -206,6 +209,8 @@ relation
         // ルールが認識されているか、 Print で確認。
         pp.Println($1)
         pp.Println($4)
+
+        $$ = cld.CreateRelation("", cld.RELATION_NORMAL, wordsToString($1), wordsToString($4), "", "")
     }
 
 // 単語(WORD)の繰り返しルール

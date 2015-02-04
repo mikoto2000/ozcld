@@ -118,6 +118,7 @@ func (this *Methods) ToDot() string {
 
 // クラス
 type Class struct {
+	id         string
 	parent     *Namespace
 	stereotype string
 	name       string
@@ -127,21 +128,29 @@ type Class struct {
 
 // 各オブジェクトからクラスを作成する
 func CreateClass(stereotype string, name string, fields *Fields, methods *Methods) *Class {
-	return &Class{nil, stereotype, name, fields, methods}
+	return &Class{"", nil, stereotype, name, fields, methods}
 }
 
 // 文字列からクラスを作成する
 func CreateClassFromDefs(stereotype string, name string, fieldDefs []string, methodDefs []string) *Class {
 	fields := CreateFieldsFromStrings(fieldDefs)
 	methods := CreateMethodsFromStrings(methodDefs)
-	return &Class{nil, stereotype, name, fields, methods}
+	return &Class{"", nil, stereotype, name, fields, methods}
+}
+
+// 識別文字列を設定する
+func (this *Class) SetIdent(id string) {
+	this.id = id
 }
 
 // 識別文字列を取得する
 func (this *Class) GetIdent() string {
-	parentIdent := this.GetParentIdent()
+	if this.id != "" {
+		return this.id
+	}
+
 	// 識別子に "." は使えないので "_" に置き換える
-	return parentIdent + "_" + strings.Replace(this.name, ".", "_", -1)
+	return strings.Replace(this.name, ".", "_", -1)
 }
 
 // 親の識別文字列を取得する
@@ -155,7 +164,7 @@ func (this *Class) GetParentIdent() string {
 // Dot 形式の文字列を返却する
 func (this *Class) ToDot() string {
 	// 必要な長さのスライスを作成
-	defs := []string{this.GetParentIdent() + "_" + this.name, " [label = \"{"}
+	defs := []string{this.GetIdent(), " [label = \"{"}
 
 	if this.stereotype != "" {
 		defs = append(defs, "\\<\\<", this.stereotype, "\\>\\>\\n")
@@ -224,9 +233,8 @@ func (this *Namespace) ToDot() string {
 
 // 識別文字列を取得する
 func (this *Namespace) GetIdent() string {
-	parentIdent := this.GetParentIdent()
 	// 識別子に "." は使えないので "_" に置き換える
-	return parentIdent + "_" + strings.Replace(this.name, ".", "_", -1)
+	return strings.Replace(this.name, ".", "_", -1)
 }
 
 // 親の識別文字列を取得する
@@ -255,14 +263,14 @@ type RelationType int
 type Relation struct {
 	name             string
 	relationType     RelationType
-	fromClass        *Class
-	toClass          *Class
+	fromClass        string
+	toClass          string
 	fromMultiplicity string
 	toMultiplicity   string
 }
 
 // Relation を作成する
-func CreateRelation(name string, relationType RelationType, fromClass *Class, toClass *Class, fromMultiplicity string, toMultiplicity string) *Relation {
+func CreateRelation(name string, relationType RelationType, fromClass string, toClass string, fromMultiplicity string, toMultiplicity string) *Relation {
 	return &Relation{name, relationType, fromClass, toClass, fromMultiplicity, toMultiplicity}
 }
 
@@ -301,7 +309,7 @@ func (this *Relation) ToDot() string {
 
 	// 基本
 	base := []string{"edge [style = \"" + style + "\", arrowhead = \"" + arrowhead + "\"];\n"}
-	base = append(base, this.fromClass.GetIdent()+" -> "+this.toClass.GetIdent())
+	base = append(base, this.fromClass+" -> "+this.toClass)
 
 	// 詳細
 	detail := []string{}
