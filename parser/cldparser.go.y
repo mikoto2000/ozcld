@@ -31,6 +31,7 @@ type Token struct {
     namespace *cld.Namespace
     namespaces []*cld.Namespace
     relation *cld.Relation
+    relations []*cld.Relation
     word *Token
     words []*Token
 }
@@ -57,6 +58,7 @@ type Token struct {
 %type<namespaces> namespaces
 
 %type<relation> relation
+%type<relations> relations
 
 %token<word> LABEL_CLD
 %token<word> LABEL_CLASS
@@ -71,14 +73,14 @@ type Token struct {
 %%
 
 classDiagram
-    : LABEL_CLD WORD START_BLOCK namespaces classes relation END_BLOCK
+    : LABEL_CLD WORD START_BLOCK namespaces classes relations END_BLOCK
     {
         //pp.Println("classDiagram")
 
         namespaces := $4
         classes := $5
 
-        $$ = cld.CreateClassDiagram($2.Literal, namespaces, classes, []*cld.Relation{$6})
+        $$ = cld.CreateClassDiagram($2.Literal, namespaces, classes, $6)
 
         yylex.(*Lexer).Result = $$
     }
@@ -200,11 +202,26 @@ namespace
         yylex.(*Lexer).Result = $$
     }
 
-relation
+relations
     :
     {
+        $$ = []*cld.Relation{}
     }
-    | words HYPHEN GT words
+    | relation
+    {
+        $$ = []*cld.Relation{$1}
+    }
+    | relations relation
+    {
+        relations := append($1, $2)
+
+        $$ = relations
+
+        yylex.(*Lexer).Result = $$
+    }
+
+relation
+    : words HYPHEN GT words
     {
         $$ = cld.CreateRelation("", cld.RELATION_NORMAL, wordsToString($1), wordsToString($4), "", "")
     }
