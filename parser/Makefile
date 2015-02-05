@@ -1,7 +1,9 @@
 all: yacc build run
 
 run: cldparser
-	./cldparser test05.txt
+	./cldparser target.ozcld > /tmp/ozcld.dot
+	dot -Tpng /tmp/ozcld.dot -o /tmp/ozcld.png
+	img2sixel /tmp/ozcld.png
 
 build: cldparser.go cldparser.go
 	go build -o cldparser cldparser.go

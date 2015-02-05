@@ -1,0 +1,56 @@
+classdiagram SelfDefinition {
+    namespace TestOuterNamespace{
+        namespace TestInnerNamespace1 {
+            class InnerNamespace1Class {
+                    ==
+                    ==
+                    bbbb;
+                    bbbb;
+            }
+        }
+        namespace TestInnerNamespace2 {
+            class InnerNamespace2Class {
+                    ==
+                    aaaa;
+                    aaaa;
+                    ==
+            }
+        }
+        class OuterNamespaceClass1 {
+                ==
+                aaaa;
+                aaaa;
+                ==
+        }
+        class OuterNamespaceClass2 {
+                ==
+                aaaa;
+                ==
+                bbbb;
+        }
+    }
+    namespace indotnamespace {
+        class InDotNamespceClass {
+                ==
+                ==
+                bbbb;
+                bbbb;
+        }
+    }
+    class TestClass {
+            ==
+            - field01 : string;
+            - field02 : string;
+            ==
+            + Method01(arg01 : int);
+            - method02(arg01 : string);
+    }
+    class TestInterface {
+            Interface
+            ==
+            ==
+            bbbb;
+    }
+    OuterNamespaceClass1 -> OuterNamespaceClass2
+}
+
