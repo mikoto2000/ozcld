@@ -86,7 +86,11 @@ classDiagram
     }
 
 classes
-    : class
+    :
+    {
+        $$ = []*cld.Class{}
+    }
+    | class
     {
         $$ = []*cld.Class{$1}
     }
@@ -155,7 +159,11 @@ divisionMarker
     : EQUAL EQUAL
 
 namespaces
-    : namespace
+    :
+    {
+        $$ = []*cld.Namespace{}
+    }
+    | namespace
     {
         $$ = []*cld.Namespace{$1}
     }
@@ -165,31 +173,7 @@ namespaces
     }
 
 namespace
-    : LABEL_NAMESPACE WORD START_BLOCK END_BLOCK
-    {
-        //pp.Println("namespace")
-
-        $$ = cld.CreateNamespace($2.Literal, nil, nil)
-
-        yylex.(*Lexer).Result = $$
-    }
-    | LABEL_NAMESPACE WORD START_BLOCK classes END_BLOCK
-    {
-        //pp.Println("namespace")
-
-        $$ = cld.CreateNamespace($2.Literal, $4, nil)
-
-        yylex.(*Lexer).Result = $$
-    }
-    | LABEL_NAMESPACE WORD START_BLOCK namespaces END_BLOCK
-    {
-        //pp.Println("namespace")
-
-        $$ = cld.CreateNamespace($2.Literal, nil, $4)
-
-        yylex.(*Lexer).Result = $$
-    }
-    | LABEL_NAMESPACE WORD START_BLOCK namespaces classes END_BLOCK
+    : LABEL_NAMESPACE WORD START_BLOCK namespaces classes END_BLOCK
     {
         //pp.Println("namespace")
 
