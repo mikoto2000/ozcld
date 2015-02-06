@@ -1,0 +1,20 @@
+classdiagram SelfDefinition {
+    namespace 名前空間の入れ子 {
+        namespace 中の名前空間 {
+            class 中の中のクラス {
+                ==
+                ==
+            }
+        }
+        class 中のクラス {
+            ==
+            ==
+        }
+    }
+    class 外のクラス {
+        ==
+        ==
+    }
+    中のクラス -> 外のクラス
+}
+

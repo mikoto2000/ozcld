@@ -1,0 +1,37 @@
+classdiagram SelfDefinition {
+    namespace 二つ以上入れられるか {
+        namespace 中の名前空間１ {
+            class 中の中のクラス１ {
+                ==
+                ==
+            }
+            class 中の中のクラス２ {
+                ==
+                ==
+            }
+        }
+        namespace 中の名前空間２ {
+            class 中の中のクラス３ {
+                ==
+                ==
+            }
+        }
+        class 中のクラス１ {
+            ==
+            ==
+        }
+        class 中のクラス２ {
+            ==
+            ==
+        }
+    }
+    class 外のクラス１ {
+        ==
+        ==
+    }
+    class 外のクラス２ {
+        ==
+        ==
+    }
+}
+

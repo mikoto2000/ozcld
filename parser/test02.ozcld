@@ -1,0 +1,7 @@
+classdiagram SelfDefinition {
+    class クラス一つだけのテスト {
+        ==
+        ==
+    }
+}
+

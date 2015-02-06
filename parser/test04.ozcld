@@ -1,0 +1,14 @@
+classdiagram SelfDefinition {
+    namespace 関連付き {
+        class 中のクラス {
+            ==
+            ==
+        }
+    }
+    class 外のクラス {
+        ==
+        ==
+    }
+    中のクラス -> 外のクラス
+}
+
