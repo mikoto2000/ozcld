@@ -119,7 +119,6 @@ func (this *Methods) ToDot() string {
 // クラス
 type Class struct {
 	id         string
-	parent     *Namespace
 	stereotype string
 	name       string
 	fields     *Fields
@@ -128,14 +127,14 @@ type Class struct {
 
 // 各オブジェクトからクラスを作成する
 func CreateClass(stereotype string, name string, fields *Fields, methods *Methods) *Class {
-	return &Class{"", nil, stereotype, name, fields, methods}
+	return &Class{"", stereotype, name, fields, methods}
 }
 
 // 文字列からクラスを作成する
 func CreateClassFromDefs(stereotype string, name string, fieldDefs []string, methodDefs []string) *Class {
 	fields := CreateFieldsFromStrings(fieldDefs)
 	methods := CreateMethodsFromStrings(methodDefs)
-	return &Class{"", nil, stereotype, name, fields, methods}
+	return &Class{"", stereotype, name, fields, methods}
 }
 
 // 識別文字列を設定する
@@ -151,14 +150,6 @@ func (this *Class) GetIdent() string {
 
 	// 識別子に "." は使えないので "_" に置き換える
 	return strings.Replace(this.name, ".", "_", -1)
-}
-
-// 親の識別文字列を取得する
-func (this *Class) GetParentIdent() string {
-	if this.parent == nil {
-		return "main"
-	}
-	return this.parent.GetIdent()
 }
 
 // Dot 形式の文字列を返却する
@@ -190,7 +181,6 @@ func (this *Class) AddMethodFromString(def string) {
 
 // 名前空間(パッケージ)
 type Namespace struct {
-	parent     *Namespace
 	name       string
 	classes    []*Class
 	namespaces []*Namespace
@@ -198,23 +188,14 @@ type Namespace struct {
 
 // Namespace を作成する
 func CreateNamespace(name string, classes []*Class, namespaces []*Namespace) *Namespace {
-	this := &Namespace{nil, name, classes, namespaces}
+	this := &Namespace{name, classes, namespaces}
 
-	// 各クラスに親 Namespace を設定
-	for _, class := range classes {
-		class.parent = this
-	}
-
-	// 各名前空間にに親 Namespace を設定
-	for _, namespace := range namespaces {
-		namespace.parent = this
-	}
 	return this
 }
 
 // Dot 形式の文字列を返却する
 func (this *Namespace) ToDot() string {
-	defs := []string{"subgraph cluster_" + this.GetParentIdent() + "_" + this.name + " {"}
+	defs := []string{"subgraph cluster_" + this.name + " {"}
 
 	defs = append(defs, "label = \""+this.name+"\";")
 
@@ -237,23 +218,13 @@ func (this *Namespace) GetIdent() string {
 	return strings.Replace(this.name, ".", "_", -1)
 }
 
-// 親の識別文字列を取得する
-func (this *Namespace) GetParentIdent() string {
-	if this.parent == nil {
-		return "main"
-	}
-	return this.parent.GetIdent()
-}
-
 // Class を追加
 func (this *Namespace) AddClass(class *Class) {
-	class.parent = this
 	this.classes = append(this.classes, class)
 }
 
 // Namespace を追加
 func (this *Namespace) AddNamespace(namespace *Namespace) {
-	namespace.parent = this
 	this.namespaces = append(this.namespaces, namespace)
 }
 
