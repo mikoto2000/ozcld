@@ -85,10 +85,6 @@ classDiagram
         yylex.(*Lexer).Result = $$
     }
 
-classDiagramItem
-    : namespace
-    | class
-
 classes
     : class
     {
