@@ -58,6 +58,9 @@ type Token struct {
 %type<namespaces> namespaces
 
 %type<relation> relation
+%type<relation> relation_normal
+%type<relation> relation_inherit
+%type<relation> relation_implement
 %type<relations> relations
 
 %token<word> LABEL_CLD
@@ -69,6 +72,8 @@ type Token struct {
 // 関連
 %token<word> HYPHEN
 %token<word> GT
+%token<word> PIPE
+%token<word> DOT
 
 %%
 
@@ -201,9 +206,26 @@ relations
     }
 
 relation
-    : words HYPHEN GT words
+    : relation_normal
+    | relation_inherit
+    | relation_implement
+
+relation_normal
+    : words HYPHEN GT words EOM
     {
         $$ = cld.CreateRelation("", cld.RELATION_NORMAL, wordsToString($1), wordsToString($4), "", "")
+    }
+
+relation_inherit
+    : words HYPHEN PIPE GT words EOM
+    {
+        $$ = cld.CreateRelation("", cld.RELATION_INHERIT, wordsToString($1), wordsToString($5), "", "")
+    }
+
+relation_implement
+    : words DOT PIPE GT words EOM
+    {
+        $$ = cld.CreateRelation("", cld.RELATION_IMPLEMENT, wordsToString($1), wordsToString($5), "", "")
     }
 
 // 単語(WORD)の繰り返しルール
@@ -273,10 +295,14 @@ func (l *Lexer) Lex(lval *yySymType) int {
         token = END_BLOCK
     } else if l.TokenText() == ";" {
         token = EOM
+    } else if l.TokenText() == "." {
+        token = DOT
     } else if l.TokenText() == "-" {
         token = HYPHEN
     } else if l.TokenText() == ">" {
         token = GT
+    } else if l.TokenText() == "|" {
+        token = PIPE
     } else if token != scanner.EOF {
         // WORD は、yacc 宣言部で書いた token<xxx> のどれか
         token = WORD
