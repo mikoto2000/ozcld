@@ -41,6 +41,7 @@ type Token struct {
 
 // 単語
 %token<word> WORD
+%type<word> validSigne
 
 
 %type<classDiagram> classDiagram
@@ -78,14 +79,14 @@ type Token struct {
 %%
 
 classDiagram
-    : LABEL_CLD WORD START_BLOCK namespaces classes relations END_BLOCK
+    : LABEL_CLD words START_BLOCK namespaces classes relations END_BLOCK
     {
         //pp.Println("classDiagram")
 
         namespaces := $4
         classes := $5
 
-        $$ = cld.CreateClassDiagram($2.Literal, namespaces, classes, $6)
+        $$ = cld.CreateClassDiagram(wordsToString($2), namespaces, classes, $6)
 
         yylex.(*Lexer).Result = $$
     }
@@ -143,19 +144,19 @@ methods
     }
 
 class
-    : LABEL_CLASS WORD START_BLOCK words divisionMarker fields divisionMarker methods END_BLOCK
+    : LABEL_CLASS words START_BLOCK words divisionMarker fields divisionMarker methods END_BLOCK
     {
         //pp.Println("class")
 
-        $$ = cld.CreateClass(wordsToString($4), $2.Literal, $6, $8)
+        $$ = cld.CreateClass(wordsToString($4), wordsToString($2), $6, $8)
 
         yylex.(*Lexer).Result = $$
     }
-    | LABEL_CLASS WORD START_BLOCK divisionMarker fields divisionMarker methods END_BLOCK
+    | LABEL_CLASS words START_BLOCK divisionMarker fields divisionMarker methods END_BLOCK
     {
         //pp.Println("class")
 
-        $$ = cld.CreateClass("", $2.Literal, $5, $7)
+        $$ = cld.CreateClass("", wordsToString($2), $5, $7)
 
         yylex.(*Lexer).Result = $$
     }
@@ -178,11 +179,11 @@ namespaces
     }
 
 namespace
-    : LABEL_NAMESPACE WORD START_BLOCK namespaces classes END_BLOCK
+    : LABEL_NAMESPACE words START_BLOCK namespaces classes END_BLOCK
     {
         //pp.Println("namespace")
 
-        $$ = cld.CreateNamespace($2.Literal, $5, $4)
+        $$ = cld.CreateNamespace(wordsToString($2), $5, $4)
 
         yylex.(*Lexer).Result = $$
     }
@@ -238,7 +239,7 @@ words
 
         yylex.(*Lexer).Result = $$
     }
-    | HYPHEN /* word は、 '-' も許容したいので、こんな感じでルールを追加。 */
+    | validSigne /* word は、 '-' も許容したいので、こんな感じでルールを追加。 */
     {
         tokens := []*Token{$1}
 
@@ -246,7 +247,7 @@ words
 
         yylex.(*Lexer).Result = $$
     }
-    | words HYPHEN /* word は、 '-' も許容したいので、こんな感じでルールを追加。 */
+    | words validSigne /* word は、 '-' も許容したいので、こんな感じでルールを追加。 */
     {
         tokens := append($1, $2)
 
@@ -261,6 +262,13 @@ words
 
         yylex.(*Lexer).Result = $$
     }
+
+validSigne
+    : DOT
+    | HYPHEN
+    | LABEL_CLASS
+    | LABEL_NAMESPACE
+    | LABEL_CLD
 %%
 
 // yyLexer インタフェースを実装したオブジェクトを作成する。
