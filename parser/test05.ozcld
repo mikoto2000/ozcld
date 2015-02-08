@@ -15,6 +15,6 @@ classdiagram SelfDefinition {
         ==
         ==
     }
-    中のクラス -> 外のクラス
+    中のクラス -> 外のクラス;
 }
 
