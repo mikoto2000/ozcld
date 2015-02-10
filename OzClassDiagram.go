@@ -149,7 +149,7 @@ func (this *Class) GetIdent() string {
 	}
 
 	// 識別子に "." は使えないので "_" に置き換える
-	return strings.Replace(this.name, ".", "_", -1)
+	return escapeChars(this.name)
 }
 
 // Dot 形式の文字列を返却する
@@ -195,7 +195,7 @@ func CreateNamespace(name string, classes []*Class, namespaces []*Namespace) *Na
 
 // Dot 形式の文字列を返却する
 func (this *Namespace) ToDot() string {
-	defs := []string{"subgraph cluster_" + this.name + " {"}
+	defs := []string{"subgraph " + escapeChars("cluster_" + this.name) + " {"}
 
 	defs = append(defs, "label = \""+this.name+"\";")
 
@@ -215,7 +215,7 @@ func (this *Namespace) ToDot() string {
 // 識別文字列を取得する
 func (this *Namespace) GetIdent() string {
 	// 識別子に "." は使えないので "_" に置き換える
-	return strings.Replace(this.name, ".", "_", -1)
+	return escapeChars(this.name)
 }
 
 // Class を追加
@@ -358,4 +358,8 @@ func (this *ClassDiagram) AddNamespace(ns *Namespace) {
 // Relation を追加
 func (this *ClassDiagram) AddRelation(relation *Relation) {
 	this.relations = append(this.relations, relation)
+}
+
+func escapeChars(str string) string {
+	return "\"" + str + "\""
 }
