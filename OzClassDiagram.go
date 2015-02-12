@@ -20,6 +20,12 @@ func (this *Field) ToDot() string {
 	return this.field + "\\l"
 }
 
+// フィールドを作成する
+func CreateFieldFromString(def string) *Field {
+	return &Field{def}
+}
+
+// フィールドリスト
 type Fields []*Field
 
 // Dot 形式の文字列を返却する
@@ -34,11 +40,6 @@ func (this Fields) ToDot() string {
 
 	// Fields 返却
 	return strings.Join(defs, "")
-}
-
-// フィールドを作成する
-func CreateFieldFromString(def string) *Field {
-	return &Field{def}
 }
 
 // メソッド
@@ -57,40 +58,19 @@ func (this *Method) ToDot() string {
 }
 
 // メソッドリスト
-type Methods struct {
-	methods []*Method
-}
-
-// メソッドリストを作成する
-func CreateMethodsFromStrings(defs []string) *Methods {
-	// 必要な長さのスライスを作成
-	methods := make([]*Method, len(defs))
-
-	// スライスにフィールド定義を格納
-	for i, v := range defs {
-		methods[i] = CreateMethodFromString(v)
-	}
-
-	// Methods 返却
-	return &Methods{methods}
-}
-
-// Method を追加
-func (this *Methods) Add(method *Method) {
-	this.methods = append(this.methods, method)
-}
+type Methods []*Method
 
 // Dot 形式の文字列を返却する
-func (this *Methods) ToDot() string {
+func (this Methods) ToDot() string {
 	// 必要な長さのスライスを作成
-	defs := make([]string, len(this.methods))
+	defs := make([]string, len(this))
 
 	// スライスにフィールド定義を格納
-	for i, v := range this.methods {
+	for i, v := range this {
 		defs[i] = v.ToDot()
 	}
 
-	// Fields 返却
+	// Methods 返却
 	return strings.Join(defs, "")
 }
 
@@ -100,18 +80,18 @@ type Class struct {
 	stereotype string
 	name       string
 	fields     Fields
-	methods    *Methods
+	methods    Methods
 }
 
 // 各オブジェクトからクラスを作成する
-func CreateClass(stereotype string, name string, fields Fields, methods *Methods) *Class {
+func CreateClass(stereotype string, name string, fields Fields, methods Methods) *Class {
 	return &Class{"", stereotype, name, fields, methods}
 }
 
 // 文字列からクラスを作成する
 func CreateClassFromDefs(stereotype string, name string, fieldDefs []string, methodDefs []string) *Class {
 	fields := createFieldsFromStrings(fieldDefs)
-	methods := CreateMethodsFromStrings(methodDefs)
+	methods := createMethodsFromStrings(methodDefs)
 	return &Class{"", stereotype, name, fields, methods}
 }
 
@@ -124,6 +104,17 @@ func createFieldsFromStrings(fieldDefs []string) Fields {
 	}
 
 	return fields
+}
+
+// 文字列のリストから Method リストを作成する
+func createMethodsFromStrings(methodDefs []string) Methods {
+	methods := make(Methods, len(methodDefs))
+
+	for _, method := range methodDefs {
+		methods = append(methods, CreateMethodFromString(method))
+	}
+
+	return methods
 }
 
 // 識別文字列を設定する
@@ -165,7 +156,7 @@ func (this *Class) AddFieldFromString(def string) {
 // Method を追加
 func (this *Class) AddMethodFromString(def string) {
 	method := CreateMethodFromString(def)
-	this.methods.Add(method)
+	this.methods = append(this.methods, method)
 }
 
 // 名前空間(パッケージ)
