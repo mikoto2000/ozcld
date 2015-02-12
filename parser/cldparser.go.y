@@ -111,13 +111,11 @@ classes
 fields
     :
     {
-        $$ = make(cld.Fields, 0)
+        $$ = cld.Fields{}
     }
     | words EOM
     {
-        fields := make(cld.Fields, 0)
-        field := cld.CreateFieldFromString(wordsToString($1))
-        fields = append(fields, field)
+        fields := cld.Fields{cld.CreateFieldFromString(wordsToString($1))}
         $$ = fields
     }
     | fields words EOM
@@ -130,13 +128,11 @@ fields
 methods
     :
     {
-        $$ = make(cld.Methods, 0)
+        $$ = cld.Methods{}
     }
     | words EOM
     {
-        methods := make(cld.Methods, 0)
-        method := cld.CreateMethodFromString(wordsToString($1))
-        methods = append(methods, method)
+        methods := cld.Methods{cld.CreateMethodFromString(wordsToString($1))}
         $$ = methods
     }
     | methods words EOM
