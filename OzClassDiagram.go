@@ -15,52 +15,30 @@ type Field struct {
 	field string
 }
 
-// フィールドを作成する
-func CreateFieldFromString(def string) *Field {
-	return &Field{def}
-}
-
 // Dot 形式の文字列を返却する
 func (this *Field) ToDot() string {
 	return this.field + "\\l"
 }
 
-// フィールドリスト
-type Fields struct {
-	fields []*Field
-}
-
-// フィールドリストを作成する
-func CreateFieldsFromStrings(defs []string) *Fields {
-	// 必要な長さのスライスを作成
-	fields := make([]*Field, len(defs))
-
-	// スライスにフィールド定義を格納
-	for i, v := range defs {
-		fields[i] = CreateFieldFromString(v)
-	}
-
-	// Fields 返却
-	return &Fields{fields}
-}
-
-// Field を追加
-func (this *Fields) Add(field *Field) {
-	this.fields = append(this.fields, field)
-}
+type Fields []*Field
 
 // Dot 形式の文字列を返却する
-func (this *Fields) ToDot() string {
+func (this Fields) ToDot() string {
 	// 必要な長さのスライスを作成
-	defs := make([]string, len(this.fields))
+	defs := make([]string, len(this))
 
 	// スライスにフィールド定義を格納
-	for i, v := range this.fields {
+	for i, v := range this {
 		defs[i] = v.ToDot()
 	}
 
 	// Fields 返却
 	return strings.Join(defs, "")
+}
+
+// フィールドを作成する
+func CreateFieldFromString(def string) *Field {
+	return &Field{def}
 }
 
 // メソッド
@@ -121,20 +99,31 @@ type Class struct {
 	id         string
 	stereotype string
 	name       string
-	fields     *Fields
+	fields     Fields
 	methods    *Methods
 }
 
 // 各オブジェクトからクラスを作成する
-func CreateClass(stereotype string, name string, fields *Fields, methods *Methods) *Class {
+func CreateClass(stereotype string, name string, fields Fields, methods *Methods) *Class {
 	return &Class{"", stereotype, name, fields, methods}
 }
 
 // 文字列からクラスを作成する
 func CreateClassFromDefs(stereotype string, name string, fieldDefs []string, methodDefs []string) *Class {
-	fields := CreateFieldsFromStrings(fieldDefs)
+	fields := createFieldsFromStrings(fieldDefs)
 	methods := CreateMethodsFromStrings(methodDefs)
 	return &Class{"", stereotype, name, fields, methods}
+}
+
+// 文字列のリストから Field リストを作成する
+func createFieldsFromStrings(fieldDefs []string) Fields {
+	fields := make(Fields, len(fieldDefs))
+
+	for _, field := range fieldDefs {
+		fields = append(fields, CreateFieldFromString(field))
+	}
+
+	return fields
 }
 
 // 識別文字列を設定する
@@ -170,7 +159,7 @@ func (this *Class) ToDot() string {
 // Field を追加
 func (this *Class) AddFieldFromString(def string) {
 	field := CreateFieldFromString(def)
-	this.fields.Add(field)
+	this.fields = append(this.fields, field)
 }
 
 // Method を追加

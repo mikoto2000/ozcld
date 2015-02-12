@@ -27,7 +27,7 @@ type Token struct {
     class *cld.Class
     classes []*cld.Class
     classMetaDatas map[string]string
-    fields *cld.Fields
+    fields cld.Fields
     methods *cld.Methods
     namespace *cld.Namespace
     namespaces []*cld.Namespace
@@ -111,19 +111,19 @@ classes
 fields
     :
     {
-        $$ = &cld.Fields{}
+        $$ = make(cld.Fields, 0)
     }
     | words EOM
     {
-        fields := &cld.Fields{}
+        fields := make(cld.Fields, 0)
         field := cld.CreateFieldFromString(wordsToString($1))
-        fields.Add(field)
+        fields = append(fields, field)
         $$ = fields
     }
     | fields words EOM
     {
         field := cld.CreateFieldFromString(wordsToString($2))
-        $1.Add(field)
+        $1 = append($1, field)
         $$ = $1
     }
 
