@@ -26,6 +26,7 @@ type Token struct {
     classDiagram *cld.ClassDiagram
     class *cld.Class
     classes []*cld.Class
+    classMetaDatas map[string]string
     fields *cld.Fields
     methods *cld.Methods
     namespace *cld.Namespace
@@ -48,6 +49,7 @@ type Token struct {
 %type<class> class
 %type<classes> classes
 
+%type<classMetaDatas> classMetaDatas
 %type<fields> fields
 %type<methods> methods
 // end of member
@@ -75,6 +77,7 @@ type Token struct {
 %token<word> GT
 %token<word> PIPE
 %token<word> DOT
+%token<word> COLON
 
 %%
 
@@ -144,25 +147,39 @@ methods
     }
 
 class
-    : LABEL_CLASS words START_BLOCK words divisionMarker fields divisionMarker methods END_BLOCK
+    : LABEL_CLASS words START_BLOCK classMetaDatas divisionMarker fields divisionMarker methods END_BLOCK
     {
         //pp.Println("class")
+        stereotype := $4["stereotype"]
 
-        $$ = cld.CreateClass(wordsToString($4), wordsToString($2), $6, $8)
+        $$ = cld.CreateClass(stereotype, wordsToString($2), $6, $8)
 
-        yylex.(*Lexer).Result = $$
-    }
-    | LABEL_CLASS words START_BLOCK divisionMarker fields divisionMarker methods END_BLOCK
-    {
-        //pp.Println("class")
-
-        $$ = cld.CreateClass("", wordsToString($2), $5, $7)
+        id := $4["id"]
+        $$.SetIdent(id)
 
         yylex.(*Lexer).Result = $$
     }
 
 divisionMarker
     : EQUAL EQUAL
+
+// メタデータを 「プロパティ : 値」 の形でパースするためのルール
+// id         : 関連を記述するための識別子を別途指定したい場合に記述。
+//              デフォルトは、ラベル名と同一。
+// stereotype : ステレオタイプが必要な場合に記述。
+classMetaDatas
+    :
+    {
+        $$ = map[string]string{}
+    }
+    | words COLON words EOM
+    {
+        $$ = map[string]string{wordsToString($1):wordsToString($3)}
+    }
+    | classMetaDatas words COLON words EOM
+    {
+        $$[wordsToString($2)] = wordsToString($4)
+    }
 
 namespaces
     :
@@ -301,6 +318,8 @@ func (l *Lexer) Lex(lval *yySymType) int {
         token = START_BLOCK
     } else if l.TokenText() == "}" {
         token = END_BLOCK
+    } else if l.TokenText() == ":" {
+        token = COLON
     } else if l.TokenText() == ";" {
         token = EOM
     } else if l.TokenText() == "." {
