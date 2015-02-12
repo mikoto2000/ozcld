@@ -1,0 +1,13 @@
+classdiagram SelfDefinition {
+    namespace 名前空間とクラスがあるやつのテスト {
+        class 中のクラス {
+            ==
+            ==
+        }
+    }
+    class 外のクラス {
+        ==
+        ==
+    }
+}
+

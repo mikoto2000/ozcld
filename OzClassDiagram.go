@@ -15,47 +15,26 @@ type Field struct {
 	field string
 }
 
-// フィールドを作成する
-func CreateFieldFromString(def string) *Field {
-	return &Field{def}
-}
-
 // Dot 形式の文字列を返却する
 func (this *Field) ToDot() string {
 	return this.field + "\\l"
 }
 
+// フィールドを作成する
+func CreateFieldFromString(def string) *Field {
+	return &Field{def}
+}
+
 // フィールドリスト
-type Fields struct {
-	fields []*Field
-}
-
-// フィールドリストを作成する
-func CreateFieldsFromStrings(defs []string) *Fields {
-	// 必要な長さのスライスを作成
-	fields := make([]*Field, len(defs))
-
-	// スライスにフィールド定義を格納
-	for i, v := range defs {
-		fields[i] = CreateFieldFromString(v)
-	}
-
-	// Fields 返却
-	return &Fields{fields}
-}
-
-// Field を追加
-func (this *Fields) Add(field *Field) {
-	this.fields = append(this.fields, field)
-}
+type Fields []*Field
 
 // Dot 形式の文字列を返却する
-func (this *Fields) ToDot() string {
+func (this Fields) ToDot() string {
 	// 必要な長さのスライスを作成
-	defs := make([]string, len(this.fields))
+	defs := make([]string, len(this))
 
 	// スライスにフィールド定義を格納
-	for i, v := range this.fields {
+	for i, v := range this {
 		defs[i] = v.ToDot()
 	}
 
@@ -79,78 +58,90 @@ func (this *Method) ToDot() string {
 }
 
 // メソッドリスト
-type Methods struct {
-	methods []*Method
-}
-
-// メソッドリストを作成する
-func CreateMethodsFromStrings(defs []string) *Methods {
-	// 必要な長さのスライスを作成
-	methods := make([]*Method, len(defs))
-
-	// スライスにフィールド定義を格納
-	for i, v := range defs {
-		methods[i] = CreateMethodFromString(v)
-	}
-
-	// Methods 返却
-	return &Methods{methods}
-}
-
-// Method を追加
-func (this *Methods) Add(method *Method) {
-	this.methods = append(this.methods, method)
-}
+type Methods []*Method
 
 // Dot 形式の文字列を返却する
-func (this *Methods) ToDot() string {
+func (this Methods) ToDot() string {
 	// 必要な長さのスライスを作成
-	defs := make([]string, len(this.methods))
+	defs := make([]string, len(this))
 
 	// スライスにフィールド定義を格納
-	for i, v := range this.methods {
+	for i, v := range this {
 		defs[i] = v.ToDot()
 	}
 
-	// Fields 返却
+	// Methods 返却
 	return strings.Join(defs, "")
 }
 
 // クラス
 type Class struct {
-	parent     *Namespace
+	id         string
 	stereotype string
 	name       string
-	fields     *Fields
-	methods    *Methods
+	fields     Fields
+	methods    Methods
+}
+
+// 各オブジェクトからクラスを作成する
+func CreateClass(stereotype string, name string, fields Fields, methods Methods) *Class {
+	if fields == nil {
+		fields = Fields{}
+	}
+	if methods == nil {
+		methods = Methods{}
+	}
+	return &Class{"", stereotype, name, fields, methods}
 }
 
 // 文字列からクラスを作成する
 func CreateClassFromDefs(stereotype string, name string, fieldDefs []string, methodDefs []string) *Class {
-	fields := CreateFieldsFromStrings(fieldDefs)
-	methods := CreateMethodsFromStrings(methodDefs)
-	return &Class{nil, stereotype, name, fields, methods}
+	fields := createFieldsFromStrings(fieldDefs)
+	methods := createMethodsFromStrings(methodDefs)
+	return CreateClass(stereotype, name, fields, methods)
+}
+
+// 文字列のリストから Field リストを作成する
+func createFieldsFromStrings(fieldDefs []string) Fields {
+	fields := make(Fields, len(fieldDefs))
+
+	for i, field := range fieldDefs {
+		fields[i] = CreateFieldFromString(field)
+	}
+
+	return fields
+}
+
+// 文字列のリストから Method リストを作成する
+func createMethodsFromStrings(methodDefs []string) Methods {
+	methods := make(Methods, len(methodDefs))
+
+	for i, method := range methodDefs {
+		methods[i] = CreateMethodFromString(method)
+	}
+
+	return methods
+}
+
+// 識別文字列を設定する
+func (this *Class) SetIdent(id string) {
+	this.id = id
 }
 
 // 識別文字列を取得する
 func (this *Class) GetIdent() string {
-	parentIdent := this.GetParentIdent()
-	// 識別子に "." は使えないので "_" に置き換える
-	return parentIdent + "_" + strings.Replace(this.name, ".", "_", -1)
-}
-
-// 親の識別文字列を取得する
-func (this *Class) GetParentIdent() string {
-	if this.parent == nil {
-		return "main"
+	if this.id != "" {
+		return this.id
 	}
-	return this.parent.GetIdent()
+
+	// 識別子に "." は使えないので "_" に置き換える
+	return escapeChars(this.name)
 }
 
 // Dot 形式の文字列を返却する
 func (this *Class) ToDot() string {
 	// 必要な長さのスライスを作成
-	defs := []string{this.GetParentIdent() + "_" + this.name, " [label = \"{"}
+	defs := []string{this.GetIdent(), " [label = \"{"}
 
 	if this.stereotype != "" {
 		defs = append(defs, "\\<\\<", this.stereotype, "\\>\\>\\n")
@@ -165,18 +156,17 @@ func (this *Class) ToDot() string {
 // Field を追加
 func (this *Class) AddFieldFromString(def string) {
 	field := CreateFieldFromString(def)
-	this.fields.Add(field)
+	this.fields = append(this.fields, field)
 }
 
 // Method を追加
 func (this *Class) AddMethodFromString(def string) {
 	method := CreateMethodFromString(def)
-	this.methods.Add(method)
+	this.methods = append(this.methods, method)
 }
 
 // 名前空間(パッケージ)
 type Namespace struct {
-	parent     *Namespace
 	name       string
 	classes    []*Class
 	namespaces []*Namespace
@@ -184,23 +174,20 @@ type Namespace struct {
 
 // Namespace を作成する
 func CreateNamespace(name string, classes []*Class, namespaces []*Namespace) *Namespace {
-	this := &Namespace{nil, name, classes, namespaces}
-
-	// 各クラスに親 Namespace を設定
-	for _, class := range classes {
-		class.parent = this
+	if classes == nil {
+		classes = []*Class{}
 	}
-
-	// 各名前空間にに親 Namespace を設定
-	for _, namespace := range namespaces {
-		namespace.parent = this
+	if namespaces == nil {
+		namespaces = []*Namespace{}
 	}
+	this := &Namespace{name, classes, namespaces}
+
 	return this
 }
 
 // Dot 形式の文字列を返却する
 func (this *Namespace) ToDot() string {
-	defs := []string{"subgraph cluster_" + this.GetParentIdent() + "_" + this.name + " {"}
+	defs := []string{"subgraph " + escapeChars("cluster_" + this.name) + " {"}
 
 	defs = append(defs, "label = \""+this.name+"\";")
 
@@ -219,28 +206,17 @@ func (this *Namespace) ToDot() string {
 
 // 識別文字列を取得する
 func (this *Namespace) GetIdent() string {
-	parentIdent := this.GetParentIdent()
 	// 識別子に "." は使えないので "_" に置き換える
-	return parentIdent + "_" + strings.Replace(this.name, ".", "_", -1)
-}
-
-// 親の識別文字列を取得する
-func (this *Namespace) GetParentIdent() string {
-	if this.parent == nil {
-		return "main"
-	}
-	return this.parent.GetIdent()
+	return escapeChars(this.name)
 }
 
 // Class を追加
 func (this *Namespace) AddClass(class *Class) {
-	class.parent = this
 	this.classes = append(this.classes, class)
 }
 
 // Namespace を追加
 func (this *Namespace) AddNamespace(namespace *Namespace) {
-	namespace.parent = this
 	this.namespaces = append(this.namespaces, namespace)
 }
 
@@ -250,14 +226,14 @@ type RelationType int
 type Relation struct {
 	name             string
 	relationType     RelationType
-	fromClass        *Class
-	toClass          *Class
+	fromClass        string
+	toClass          string
 	fromMultiplicity string
 	toMultiplicity   string
 }
 
 // Relation を作成する
-func CreateRelation(name string, relationType RelationType, fromClass *Class, toClass *Class, fromMultiplicity string, toMultiplicity string) *Relation {
+func CreateRelation(name string, relationType RelationType, fromClass string, toClass string, fromMultiplicity string, toMultiplicity string) *Relation {
 	return &Relation{name, relationType, fromClass, toClass, fromMultiplicity, toMultiplicity}
 }
 
@@ -296,7 +272,7 @@ func (this *Relation) ToDot() string {
 
 	// 基本
 	base := []string{"edge [style = \"" + style + "\", arrowhead = \"" + arrowhead + "\"];\n"}
-	base = append(base, this.fromClass.GetIdent()+" -> "+this.toClass.GetIdent())
+	base = append(base, this.fromClass+" -> "+this.toClass)
 
 	// 詳細
 	detail := []string{}
@@ -374,4 +350,8 @@ func (this *ClassDiagram) AddNamespace(ns *Namespace) {
 // Relation を追加
 func (this *ClassDiagram) AddRelation(relation *Relation) {
 	this.relations = append(this.relations, relation)
+}
+
+func escapeChars(str string) string {
+	return "\"" + str + "\""
 }

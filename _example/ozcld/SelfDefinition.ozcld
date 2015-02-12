@@ -1,0 +1,114 @@
+classdiagram SelfDefinition {
+    class ozcld {
+        ==
+        ==
+        + CreateFieldFromString(def : string) : *Field;
+        + createFieldsFromStrings(def : []string) : *Fields;
+        + CreateMethodFromString(def : string) : *Method;
+        + createMethodsFromStrings(def : []string) : *Methods;
+        + CreateClass(stereotype : string, name : string, fields : *Fields, methods : *Methods) : *Class;
+        + CreateClassFromString(stereotype : string, name : string, fieldDefs : []string, methodDefs : []string) : *Class;
+        + CreateNamespace(name : string, classes : []*Class, namespaces : []*Namespace) : *Namespace;
+        + CreateRelation(name : string, relationType : RelationType, fromClass : string, toClass : string, fromMultiplicity : string, toMultiplicity : string) *Relation;
+        + CreateClassDiagram(name : string, namespaces : []*Namespace, classes : []*Class, relations : []*Relation) *ClassDiagram;
+    }
+    class Dot {
+        ==
+        ==
+        + ToDot() : string;
+    }
+    class Field {
+        ==
+        - field : string;
+        ==
+    }
+    class "type Fields []*Field" {
+        id: Fields;
+        ==
+        ==
+    }
+    class Method {
+        ==
+        - method : string;
+        ==
+    }
+    class "type Methods []*Methods" {
+        id: Methods;
+        ==
+        ==
+    }
+    class Class {
+        ==
+        - id : string;
+        - stereotype : string;
+        - name : string;
+        - fields : *Fields;
+        - methods : *Methods;
+        ==
+        + GetIdent() : string;
+        + SetIdent(id : string) : void;
+        + AddFieldFromString(def : string) : void;
+        + AddMethodFromString(def : string) : void;
+    }
+    class Namespace {
+        ==
+        + name : string;
+        + classes : []*Class;
+        + namespaces : []*Namespace;
+        ==
+        + GetIdent() : string;
+        + AddClass(class : *Class) : void;
+        + AddNamespace(namespace : *Namespace) : void;
+    }
+    class Relation {
+        ==
+        - name : string;
+        - relationType : RelationType;
+        - fromClassA : string;
+        - toClass : string;
+        - fromMultiplicity : string;
+        - toMultiplicity : string;
+        ==
+        - getEdgeStyles() (style string, arrowhead string);
+    }
+    class RelationType {
+        ==
+        + RELATION_NORMAL : RelationType;
+        + RELATION_INHERIT : RelationType;
+        + RELATION_IMPLEMENT : RelationType;
+        + RELATION_AGGREGATION : RelationType;
+        + RELATION_COMPOSITION : RelationType;
+        ==
+    }
+    class ClassDiagram {
+        ==
+        - name : string;
+        - namespaces : []*Namespace;
+        - classes : []*Class;
+        - relations : []*Relation;
+        ==
+        + AddClass(class : *Class);
+        + AddNamespace(ns : *Namespace);
+        + AddRelation(relation : *Relation);
+    }
+
+    Field .|> Dot;
+    Fields .|> Dot;
+    Fields -> Field;
+    Method .|> Dot;
+    Methods .|> Dot;
+    Methods -> Method;
+    Class .|> Dot;
+    Class -> Fields;
+    Class -> Methods;
+    Namespace .|> Dot;
+    Namespace -> Class;
+    Namespace -> Namespace;
+    Relation .|> Dot;
+    Relation -> Class;
+    Relation -> RelationType;
+    ClassDiagram .|> Dot;
+    ClassDiagram -> Class;
+    ClassDiagram -> Namespace;
+    ClassDiagram -> Relation;
+}

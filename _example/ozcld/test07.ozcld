@@ -1,0 +1,9 @@
+classdiagram SelfDefinition {
+    namespace a_b.c-d {
+        class a_b.c-d {
+            ==
+            ==
+        }
+    }
+}
+

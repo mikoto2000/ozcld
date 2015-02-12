@@ -1,0 +1,24 @@
+classdiagram SelfDefinition {
+    namespace ns1 {
+        class 同じクラス名だけどID違う {
+            id: a;
+            ==
+            ==
+        }
+    }
+    namespace ns2 {
+        class 同じクラス名だけどID違う {
+            id: b;
+            ==
+            ==
+        }
+    }
+    class 同じクラス名だけどID違う {
+        id: c;
+        stereotype: Test;
+        ==
+        ==
+    }
+    a -> b;
+}
+

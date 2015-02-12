@@ -11,7 +11,7 @@ func TestNamespace(t *testing.T) {
 		cld.CreateClassFromDefs("", "TestClass2", getFieldsDefs(), getMethodsDefs())}, nil)
 
 	actual1 := namespace1.ToDot()
-	expected1 := "subgraph cluster_main_TestNamespace {\nlabel = \"TestNamespace\";\nmain_TestNamespace_TestClass1 [label = \"{TestClass1|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\nmain_TestNamespace_TestClass2 [label = \"{TestClass2|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\n}"
+	expected1 := "subgraph \"cluster_TestNamespace\" {\nlabel = \"TestNamespace\";\n\"TestClass1\" [label = \"{TestClass1|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\n\"TestClass2\" [label = \"{TestClass2|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\n}"
 
 	if expected1 != actual1 {
 		t.Errorf("got\n \"%s\"\nbut want\n \"%s\"", actual1, expected1)
@@ -23,7 +23,7 @@ func TestNamespace(t *testing.T) {
 		[]*cld.Namespace{getTestNamespace("TestNamespace_innerNamespace")})
 
 	actual2 := namespace2.ToDot()
-	expected2 := "subgraph cluster_main_TestNamespace {\nlabel = \"TestNamespace\";\nsubgraph cluster_main_TestNamespace_TestNamespace_innerNamespace {\nlabel = \"TestNamespace_innerNamespace\";\nmain_TestNamespace_TestNamespace_innerNamespace_TestClass1 [label = \"{TestClass1|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\nmain_TestNamespace_TestNamespace_innerNamespace_TestClass2 [label = \"{TestClass2|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\n}\nmain_TestNamespace_TestClass1 [label = \"{TestClass1|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\nmain_TestNamespace_TestClass2 [label = \"{TestClass2|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\n}"
+	expected2 := "subgraph \"cluster_TestNamespace\" {\nlabel = \"TestNamespace\";\nsubgraph \"cluster_TestNamespace_innerNamespace\" {\nlabel = \"TestNamespace_innerNamespace\";\n\"TestClass1\" [label = \"{TestClass1|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\n\"TestClass2\" [label = \"{TestClass2|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\n}\n\"TestClass1\" [label = \"{TestClass1|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\n\"TestClass2\" [label = \"{TestClass2|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\n}"
 
 	if expected2 != actual2 {
 		t.Errorf("got\n \"%s\"\nbut want\n \"%s\"", actual2, expected2)
@@ -36,7 +36,7 @@ func TestNamespaceAddClass(t *testing.T) {
 	namespace.AddClass(cld.CreateClassFromDefs("", "TestClass2", getFieldsDefs(), getMethodsDefs()))
 
 	actual1 := namespace.ToDot()
-	expected1 := "subgraph cluster_main_TestNamespace {\nlabel = \"TestNamespace\";\nmain_TestNamespace_TestClass1 [label = \"{TestClass1|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\nmain_TestNamespace_TestClass2 [label = \"{TestClass2|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\n}"
+	expected1 := "subgraph \"cluster_TestNamespace\" {\nlabel = \"TestNamespace\";\n\"TestClass1\" [label = \"{TestClass1|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\n\"TestClass2\" [label = \"{TestClass2|- f1 : string\\l- f2 : string\\l- f3 : string\\l|- m1() : string\\l- m2() : string\\l- m3() : string\\l}\"];\n}"
 
 	if expected1 != actual1 {
 		t.Errorf("got\n \"%s\"\nbut want\n \"%s\"", actual1, expected1)
