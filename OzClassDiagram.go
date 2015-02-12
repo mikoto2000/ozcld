@@ -85,6 +85,12 @@ type Class struct {
 
 // 各オブジェクトからクラスを作成する
 func CreateClass(stereotype string, name string, fields Fields, methods Methods) *Class {
+	if fields == nil {
+		fields = Fields{}
+	}
+	if methods == nil {
+		methods = Methods{}
+	}
 	return &Class{"", stereotype, name, fields, methods}
 }
 
@@ -92,15 +98,15 @@ func CreateClass(stereotype string, name string, fields Fields, methods Methods)
 func CreateClassFromDefs(stereotype string, name string, fieldDefs []string, methodDefs []string) *Class {
 	fields := createFieldsFromStrings(fieldDefs)
 	methods := createMethodsFromStrings(methodDefs)
-	return &Class{"", stereotype, name, fields, methods}
+	return CreateClass(stereotype, name, fields, methods)
 }
 
 // 文字列のリストから Field リストを作成する
 func createFieldsFromStrings(fieldDefs []string) Fields {
 	fields := make(Fields, len(fieldDefs))
 
-	for _, field := range fieldDefs {
-		fields = append(fields, CreateFieldFromString(field))
+	for i, field := range fieldDefs {
+		fields[i] = CreateFieldFromString(field)
 	}
 
 	return fields
@@ -110,8 +116,8 @@ func createFieldsFromStrings(fieldDefs []string) Fields {
 func createMethodsFromStrings(methodDefs []string) Methods {
 	methods := make(Methods, len(methodDefs))
 
-	for _, method := range methodDefs {
-		methods = append(methods, CreateMethodFromString(method))
+	for i, method := range methodDefs {
+		methods[i] = CreateMethodFromString(method)
 	}
 
 	return methods
@@ -168,6 +174,12 @@ type Namespace struct {
 
 // Namespace を作成する
 func CreateNamespace(name string, classes []*Class, namespaces []*Namespace) *Namespace {
+	if classes == nil {
+		classes = []*Class{}
+	}
+	if namespaces == nil {
+		namespaces = []*Namespace{}
+	}
 	this := &Namespace{name, classes, namespaces}
 
 	return this

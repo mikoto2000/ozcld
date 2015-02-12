@@ -18,6 +18,7 @@ func main() {
 	class1.AddMethodFromString("+ MethodTesting3() : string")
 
 	class2 := cld.CreateClassFromDefs("", "TestClassInOuterNamespace", []string{"aaa"}, []string{"bbb"})
+	fmt.Println(class2)
 
 	innerNamespace := cld.CreateNamespace("TestInnerNamespace", nil, nil)
 	innerNamespace.AddClass(class1)

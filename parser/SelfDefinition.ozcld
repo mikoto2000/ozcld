@@ -3,9 +3,9 @@ classdiagram SelfDefinition {
         ==
         ==
         + CreateFieldFromString(def : string) : *Field;
-        + CreateFieldsFromStrings(def : []string) : *Fields;
+        + createFieldsFromStrings(def : []string) : *Fields;
         + CreateMethodFromString(def : string) : *Method;
-        + CreatemethodsFromStrings(def : []string) : *Methods;
+        + createMethodsFromStrings(def : []string) : *Methods;
         + CreateClass(stereotype : string, name : string, fields : *Fields, methods : *Methods) : *Class;
         + CreateClassFromString(stereotype : string, name : string, fieldDefs : []string, methodDefs : []string) : *Class;
         + CreateNamespace(name : string, classes : []*Class, namespaces : []*Namespace) : *Namespace;
@@ -22,22 +22,20 @@ classdiagram SelfDefinition {
         - field : string;
         ==
     }
-    class Fields {
+    class "type Fields []*Field" {
+        id: Fields;
         ==
-        - fields : []*Field;
         ==
-        + Add(field : *Field) : void;
     }
     class Method {
         ==
         - method : string;
         ==
     }
-    class Methods {
+    class "type Methods []*Methods" {
+        id: Methods;
         ==
-        - methods : []*Method;
         ==
-        + Add(method : *Method) : void;
     }
     class Class {
         ==
@@ -114,4 +112,3 @@ classdiagram SelfDefinition {
     ClassDiagram -> Namespace;
     ClassDiagram -> Relation;
 }
-
