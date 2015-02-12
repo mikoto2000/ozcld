@@ -283,6 +283,7 @@ words
 validSigne
     : DOT
     | HYPHEN
+    | COLON
     | LABEL_CLASS
     | LABEL_NAMESPACE
     | LABEL_CLD
