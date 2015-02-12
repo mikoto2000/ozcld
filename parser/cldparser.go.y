@@ -6,6 +6,7 @@ import (
     "fmt"
 //    "github.com/k0kubun/pp"
     "os"
+    "strings"
     "text/scanner"
 )
 
@@ -334,7 +335,7 @@ func (l *Lexer) Lex(lval *yySymType) int {
 
     // 解析結果を lval に詰める。
     // WORD を Token 型に変更したので、そのように修正。
-    lval.word = &Token{Type: token, Literal: l.TokenText()}
+    lval.word = &Token{Type: token, Literal: strings.Trim(l.TokenText(), "'\"")}
 
     // 解釈したトークンの種類を返却する
     return token
