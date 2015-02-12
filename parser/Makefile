@@ -1,7 +1,7 @@
 all: yacc build run
 
 run: cldparser
-	./cldparser target.ozcld > /tmp/ozcld.dot
+	./cldparser testdata/target.ozcld > /tmp/ozcld.dot
 	dot -Tpng /tmp/ozcld.dot -o /tmp/ozcld.png
 	img2sixel /tmp/ozcld.png
 	rm /tmp/ozcld.png
