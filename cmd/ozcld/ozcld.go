@@ -7,10 +7,6 @@ import (
 	"os"
 )
 
-func main() {
-	// 第一引数で渡されたファイルを読み込んでパース
-	file, _ := os.Open(os.Args[1])
-	fmt.Println(cld.Parse(file))
 func printUsage() {
 	fmt.Println("Usage: ozcld [OPTIONS] INFILE")
 	flag.PrintDefaults()
