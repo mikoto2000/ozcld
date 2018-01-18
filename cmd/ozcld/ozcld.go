@@ -46,7 +46,16 @@ func main() {
 
 	// パースに成功したら、-o オプションで渡されたファイルに出力
 	// -o が無ければ、標準出力に出力する。
-	parseResult := cld.Parse(inFile)
+	parseResult, parseErrors := cld.Parse(inFile)
+
+	if parseErrors != nil {
+		for _, e := range parseErrors {
+			errorMessage := fmt.Sprintf("ERROR: %v\n", e)
+			fmt.Fprintf(os.Stderr, errorMessage)
+		}
+		os.Exit(1)
+	}
+
 	if *outFilePath == "" {
 		printStdout(parseResult)
 	} else {

@@ -1,6 +1,8 @@
 package ozcld
 
 import (
+	"errors"
+	"fmt"
 	//    "github.com/k0kubun/pp"
 	"os"
 	"strings"
@@ -22,6 +24,8 @@ type Token struct {
 // こいつの Lex メソッドが、字句解析を担当する。
 type Lexer struct {
 	scanner.Scanner
+
+	ErrorList []error
 
 	// パースの結果を格納するオブジェクトを追加
 	Result Result
@@ -76,9 +80,11 @@ func (l *Lexer) Lex(lval *yySymType) int {
 	return token
 }
 
-/* エラーはとりあえずパニック */
+/* エラー情報を追加 */
 func (l *Lexer) Error(e string) {
-	panic(e)
+	errorMessage := fmt.Sprintf("'%v' <Line %v, Column %v> in %v", l.TokenText(), l.Pos().Line, l.Pos().Column, l.Filename)
+
+	l.ErrorList = append(l.ErrorList, errors.New(errorMessage))
 }
 
 // トークンのリストを結合し、ひとつの文字列にする
@@ -92,9 +98,11 @@ func wordsToString(words []*Token) string {
 	return str
 }
 
-func Parse(file *os.File) string {
+func Parse(file *os.File) (string, []error) {
 	// 自作 Lexer 作成
 	l := new(Lexer)
+	l.Filename = file.Name()
+	l.ErrorList = make([]error, 0)
 
 	// 第一引数で渡されたファイルを読み込んでパースするように設定
 	l.Init(file)
@@ -106,5 +114,9 @@ func Parse(file *os.File) string {
 	// こういう使い方すると、もう l って Lexer の範疇超えてる気がするけれどどうなのだろうか？
 	//pp.Println(l.Result)
 
-	return l.Result.(Dot).ToDot()
+	if l.Result == nil || len(l.ErrorList) != 0 {
+		return "", l.ErrorList
+	}
+
+	return l.Result.(Dot).ToDot(), nil
 }
