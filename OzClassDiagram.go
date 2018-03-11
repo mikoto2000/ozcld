@@ -256,10 +256,10 @@ func (this *Relation) getEdgeStyles() (style string, arrowhead string) {
 		arrowhead = "onormal"
 	} else if this.relationType == RELATION_AGGREGATION {
 		style = "solid"
-		arrowhead = ""
+		arrowhead = "open"
 	} else if this.relationType == RELATION_COMPOSITION {
 		style = "solid"
-		arrowhead = ""
+		arrowhead = "open"
 	}
 
 	return style, arrowhead
