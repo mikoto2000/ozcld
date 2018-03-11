@@ -1,24 +1,26 @@
-
-//line parser.go.y:2
+//line ./parser.go.y:2
 package ozcld
+
 import __yyfmt__ "fmt"
-//line parser.go.y:2
-		
-//line parser.go.y:5
-type yySymType struct{
-	yys int
-    classDiagram *ClassDiagram
-    class *Class
-    classes []*Class
-    classMetaDatas map[string]string
-    fields Fields
-    methods Methods
-    namespace *Namespace
-    namespaces []*Namespace
-    relation *Relation
-    relations []*Relation
-    word *Token
-    words []*Token
+
+//line ./parser.go.y:2
+//line ./parser.go.y:5
+type yySymType struct {
+	yys            int
+	classDiagram   *ClassDiagram
+	class          *Class
+	note           *Note
+	classes        []*Class
+	notes          []*Note
+	classMetaDatas map[string]string
+	fields         Fields
+	methods        Methods
+	namespace      *Namespace
+	namespaces     []*Namespace
+	relation       *Relation
+	relations      []*Relation
+	word           *Token
+	words          []*Token
 }
 
 const WORD = 57346
@@ -26,21 +28,26 @@ const EOM = 57347
 const EQUAL = 57348
 const LABEL_CLD = 57349
 const LABEL_CLASS = 57350
-const LABEL_NAMESPACE = 57351
-const START_BLOCK = 57352
-const END_BLOCK = 57353
-const HYPHEN = 57354
-const GT = 57355
-const PIPE = 57356
-const DOT = 57357
-const COLON = 57358
+const LABEL_NOTE = 57351
+const LABEL_NAMESPACE = 57352
+const START_BLOCK = 57353
+const END_BLOCK = 57354
+const HYPHEN = 57355
+const GT = 57356
+const PIPE = 57357
+const DOT = 57358
+const COLON = 57359
 
-var yyToknames = []string{
+var yyToknames = [...]string{
+	"$end",
+	"error",
+	"$unk",
 	"WORD",
 	"EOM",
 	"EQUAL",
 	"LABEL_CLD",
 	"LABEL_CLASS",
+	"LABEL_NOTE",
 	"LABEL_NAMESPACE",
 	"START_BLOCK",
 	"END_BLOCK",
@@ -50,148 +57,183 @@ var yyToknames = []string{
 	"DOT",
 	"COLON",
 }
-var yyStatenames = []string{}
+var yyStatenames = [...]string{}
 
 const yyEofCode = 1
 const yyErrCode = 2
-const yyMaxDepth = 200
+const yyInitialStackSize = 16
 
-//line parser.go.y:266
-
+//line ./parser.go.y:296
 
 //line yacctab:1
-var yyExca = []int{
+var yyExca = [...]int{
 	-1, 1,
 	1, -1,
 	-2, 0,
 }
 
-const yyNprod = 39
+const yyNprod = 44
 const yyPrivate = 57344
 
 var yyTokenNames []string
 var yyStates []string
 
-const yyLast = 319
+const yyLast = 360
 
-var yyAct = []int{
+var yyAct = [...]int{
 
-	5, 16, 48, 18, 13, 15, 25, 20, 14, 75,
-	41, 11, 9, 10, 39, 40, 7, 19, 47, 6,
-	8, 46, 21, 13, 17, 52, 24, 21, 17, 2,
-	34, 13, 13, 59, 23, 29, 28, 27, 38, 69,
-	19, 56, 44, 42, 13, 1, 13, 0, 30, 0,
-	13, 3, 24, 0, 0, 13, 13, 0, 13, 64,
-	0, 13, 0, 0, 13, 0, 22, 13, 0, 0,
-	31, 13, 0, 13, 0, 31, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 43, 0, 45, 0,
-	0, 49, 0, 0, 0, 54, 55, 57, 14, 74,
-	60, 11, 9, 10, 0, 63, 7, 66, 0, 6,
-	8, 0, 4, 70, 0, 11, 9, 10, 72, 73,
-	7, 0, 0, 6, 8, 14, 71, 0, 11, 9,
-	10, 0, 0, 7, 0, 0, 6, 8, 14, 68,
-	0, 11, 9, 10, 0, 0, 7, 0, 0, 6,
-	8, 14, 67, 0, 11, 9, 10, 0, 0, 7,
-	0, 0, 6, 8, 14, 65, 0, 11, 9, 10,
-	0, 0, 7, 0, 0, 6, 8, 4, 0, 50,
-	11, 9, 10, 0, 0, 7, 0, 0, 6, 8,
-	14, 62, 0, 11, 9, 10, 0, 0, 7, 0,
-	0, 6, 8, 14, 61, 0, 11, 9, 10, 0,
-	0, 7, 0, 0, 6, 8, 14, 53, 0, 11,
-	9, 10, 0, 0, 7, 0, 14, 6, 8, 11,
-	9, 10, 37, 0, 7, 0, 4, 6, 8, 11,
-	9, 10, 0, 33, 7, 0, 14, 6, 8, 11,
-	9, 10, 32, 0, 7, 0, 14, 6, 8, 11,
-	9, 10, 12, 0, 7, 0, 4, 6, 8, 11,
-	9, 10, 0, 0, 7, 0, 14, 6, 8, 11,
-	9, 10, 0, 0, 7, 0, 14, 6, 58, 11,
-	9, 10, 0, 0, 7, 0, 14, 6, 51, 11,
-	9, 10, 0, 0, 35, 0, 4, 36, 8, 11,
-	26, 10, 0, 0, 7, 0, 0, 6, 8,
+	5, 21, 26, 53, 14, 24, 17, 16, 51, 32,
+	19, 49, 50, 15, 85, 60, 12, 9, 10, 11,
+	59, 25, 7, 20, 14, 6, 8, 31, 27, 14,
+	22, 67, 18, 22, 27, 2, 18, 40, 14, 14,
+	42, 65, 30, 36, 35, 34, 37, 20, 14, 3,
+	25, 48, 79, 14, 57, 14, 62, 46, 1, 14,
+	31, 0, 0, 0, 14, 23, 72, 14, 0, 28,
+	14, 14, 14, 0, 38, 14, 0, 0, 0, 0,
+	38, 14, 0, 14, 0, 4, 47, 55, 12, 9,
+	10, 11, 52, 54, 7, 0, 58, 6, 8, 0,
+	63, 0, 0, 66, 0, 0, 69, 70, 0, 71,
+	0, 74, 15, 84, 0, 12, 9, 10, 11, 80,
+	0, 7, 0, 0, 6, 8, 82, 4, 0, 0,
+	12, 9, 10, 11, 0, 83, 7, 0, 0, 6,
+	8, 15, 81, 0, 12, 9, 10, 11, 0, 0,
+	7, 0, 0, 6, 8, 15, 78, 0, 12, 9,
+	10, 11, 0, 0, 7, 0, 0, 6, 8, 15,
+	77, 0, 12, 9, 10, 11, 0, 0, 7, 0,
+	0, 6, 8, 15, 76, 0, 12, 9, 10, 11,
+	0, 0, 7, 0, 0, 6, 8, 15, 75, 0,
+	12, 9, 10, 11, 0, 0, 7, 0, 0, 6,
+	8, 15, 73, 0, 12, 9, 10, 11, 0, 0,
+	7, 0, 0, 6, 8, 15, 68, 0, 12, 9,
+	10, 11, 0, 0, 7, 0, 15, 6, 8, 12,
+	9, 10, 11, 0, 61, 7, 0, 15, 6, 8,
+	12, 9, 10, 11, 45, 0, 7, 0, 4, 6,
+	8, 12, 9, 10, 11, 0, 41, 7, 0, 15,
+	6, 8, 12, 9, 10, 11, 39, 0, 7, 0,
+	15, 6, 8, 12, 9, 10, 11, 29, 0, 7,
+	0, 15, 6, 8, 12, 9, 10, 11, 13, 0,
+	7, 0, 4, 6, 8, 12, 9, 10, 11, 0,
+	0, 7, 0, 15, 6, 8, 12, 9, 10, 11,
+	0, 0, 7, 0, 15, 6, 64, 12, 9, 10,
+	11, 0, 0, 7, 0, 15, 6, 56, 12, 9,
+	10, 11, 0, 0, 43, 0, 4, 44, 8, 12,
+	9, 33, 11, 0, 0, 7, 0, 0, 6, 8,
 }
-var yyPact = []int{
+var yyPact = [...]int{
 
-	22, -1000, 262, 252, -1000, -1000, -1000, -1000, -1000, -1000,
-	-1000, -1000, 15, -1000, -1000, 19, -1000, 262, 302, -1000,
-	-1000, 262, 242, 232, -1000, -1000, 262, -1000, -1000, -1000,
-	292, 222, 15, -1000, -1000, 1, -4, 262, 19, 262,
-	8, 5, 173, 282, 14, 212, 262, 262, 262, 272,
-	27, 262, -1000, -1000, 199, 186, 173, 160, 262, -1000,
-	147, -1000, -1000, 134, 262, -1000, 121, -1000, -1000, 108,
-	94, -1000, 4, -1000, -1000, -1000,
+	28, -1000, 298, 287, -1000, -1000, -1000, -1000, -1000, -1000,
+	-1000, -1000, -1000, 26, -1000, -1000, 22, -1000, 298, 25,
+	-1000, -1000, 298, 276, 342, -1000, -1000, 298, 265, 26,
+	254, -1000, -1000, 298, -1000, -1000, -1000, 331, 243, 298,
+	22, -1000, -1000, -3, -7, 298, 81, 320, 25, 298,
+	6, 1, 232, 298, 309, 35, 298, 19, 221, 298,
+	298, -1000, 81, 207, 298, -1000, 193, -1000, -1000, 179,
+	165, 151, 298, -1000, 137, -1000, -1000, -1000, -1000, 123,
+	108, -1000, 9, -1000, -1000, -1000,
 }
-var yyPgo = []int{
+var yyPgo = [...]int{
 
-	0, 48, 0, 45, 7, 3, 43, 41, 39, 2,
-	1, 5, 6, 37, 36, 35, 34,
+	0, 46, 0, 58, 1, 2, 10, 5, 57, 56,
+	52, 3, 6, 7, 9, 45, 44, 43, 42,
 }
-var yyR1 = []int{
+var yyR1 = [...]int{
 
-	0, 3, 5, 5, 5, 7, 7, 7, 8, 8,
-	8, 4, 9, 6, 6, 6, 11, 11, 11, 10,
-	16, 16, 16, 12, 12, 12, 13, 14, 15, 1,
-	1, 1, 1, 2, 2, 2, 2, 2, 2,
+	0, 3, 6, 6, 6, 7, 7, 7, 9, 9,
+	9, 10, 10, 10, 4, 5, 11, 8, 8, 8,
+	13, 13, 13, 12, 18, 18, 18, 14, 14, 14,
+	15, 16, 17, 1, 1, 1, 1, 2, 2, 2,
+	2, 2, 2, 2,
 }
-var yyR2 = []int{
+var yyR2 = [...]int{
 
-	0, 7, 0, 1, 2, 0, 2, 3, 0, 2,
-	3, 9, 2, 0, 4, 5, 0, 1, 2, 6,
-	0, 1, 2, 1, 1, 1, 5, 6, 6, 1,
-	1, 2, 2, 1, 1, 1, 1, 1, 1,
+	0, 8, 0, 1, 2, 0, 1, 2, 0, 2,
+	3, 0, 2, 3, 9, 5, 2, 0, 4, 5,
+	0, 1, 2, 7, 0, 1, 2, 1, 1, 1,
+	5, 6, 6, 1, 1, 2, 2, 1, 1, 1,
+	1, 1, 1, 1,
 }
-var yyChk = []int{
+var yyChk = [...]int{
 
-	-1000, -3, 7, -1, 4, -2, 15, 12, 16, 8,
-	9, 7, 10, -2, 4, -11, -10, 9, -5, -10,
-	-4, 8, -1, -16, -4, -12, 8, -13, -14, -15,
-	-1, -1, 10, 11, -12, 12, 15, 10, -11, 13,
-	14, 14, -6, -1, -5, -1, 13, 13, -9, -1,
-	6, 16, 11, 5, -1, -1, -7, -1, 16, 6,
-	-1, 5, 5, -1, -9, 5, -1, 5, 5, -8,
-	-1, 5, -1, 11, 5, 5,
+	-1000, -3, 7, -1, 4, -2, 16, 13, 17, 8,
+	9, 10, 7, 11, -2, 4, -13, -12, 10, -6,
+	-12, -4, 8, -1, -7, -4, -5, 9, -1, 11,
+	-18, -5, -14, 9, -15, -16, -17, -1, -1, 11,
+	-13, 12, -14, 13, 16, 11, -8, -1, -6, 14,
+	15, 15, -1, -11, -1, 6, 17, -7, -1, 14,
+	14, 12, -9, -1, 17, 6, -1, 12, 5, -1,
+	-1, -1, -11, 5, -1, 5, 5, 5, 5, -10,
+	-1, 5, -1, 12, 5, 5,
 }
-var yyDef = []int{
+var yyDef = [...]int{
 
-	0, -2, 0, 0, 29, 30, 33, 34, 35, 36,
-	37, 38, 16, 31, 32, 2, 17, 0, 20, 18,
-	3, 0, 0, 0, 4, 21, 0, 23, 24, 25,
-	0, 0, 16, 1, 22, 34, 33, 13, 2, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 5, 0,
-	0, 0, 19, 26, 0, 0, 0, 0, 0, 12,
-	0, 27, 28, 0, 8, 6, 0, 14, 7, 0,
-	0, 15, 0, 11, 9, 10,
+	0, -2, 0, 0, 33, 34, 37, 38, 39, 40,
+	41, 42, 43, 20, 35, 36, 2, 21, 0, 5,
+	22, 3, 0, 0, 24, 4, 6, 0, 0, 20,
+	0, 7, 25, 0, 27, 28, 29, 0, 0, 17,
+	2, 1, 26, 38, 37, 0, 0, 0, 5, 0,
+	0, 0, 0, 8, 0, 0, 0, 0, 0, 0,
+	0, 15, 0, 0, 0, 16, 0, 23, 30, 0,
+	0, 0, 11, 9, 0, 18, 31, 32, 10, 0,
+	0, 19, 0, 14, 12, 13,
 }
-var yyTok1 = []int{
+var yyTok1 = [...]int{
 
 	1,
 }
-var yyTok2 = []int{
+var yyTok2 = [...]int{
 
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-	12, 13, 14, 15, 16,
+	12, 13, 14, 15, 16, 17,
 }
-var yyTok3 = []int{
+var yyTok3 = [...]int{
 	0,
 }
+
+var yyErrorMessages = [...]struct {
+	state int
+	token int
+	msg   string
+}{}
 
 //line yaccpar:1
 
 /*	parser for yacc output	*/
 
-var yyDebug = 0
+var (
+	yyDebug        = 0
+	yyErrorVerbose = false
+)
 
 type yyLexer interface {
 	Lex(lval *yySymType) int
 	Error(s string)
 }
 
+type yyParser interface {
+	Parse(yyLexer) int
+	Lookahead() int
+}
+
+type yyParserImpl struct {
+	lval  yySymType
+	stack [yyInitialStackSize]yySymType
+	char  int
+}
+
+func (p *yyParserImpl) Lookahead() int {
+	return p.char
+}
+
+func yyNewParser() yyParser {
+	return &yyParserImpl{}
+}
+
 const yyFlag = -1000
 
 func yyTokname(c int) string {
-	// 4 is TOKSTART above
-	if c >= 4 && c-4 < len(yyToknames) {
-		if yyToknames[c-4] != "" {
-			return yyToknames[c-4]
+	if c >= 1 && c-1 < len(yyToknames) {
+		if yyToknames[c-1] != "" {
+			return yyToknames[c-1]
 		}
 	}
 	return __yyfmt__.Sprintf("tok-%v", c)
@@ -206,51 +248,127 @@ func yyStatname(s int) string {
 	return __yyfmt__.Sprintf("state-%v", s)
 }
 
-func yylex1(lex yyLexer, lval *yySymType) int {
-	c := 0
-	char := lex.Lex(lval)
+func yyErrorMessage(state, lookAhead int) string {
+	const TOKSTART = 4
+
+	if !yyErrorVerbose {
+		return "syntax error"
+	}
+
+	for _, e := range yyErrorMessages {
+		if e.state == state && e.token == lookAhead {
+			return "syntax error: " + e.msg
+		}
+	}
+
+	res := "syntax error: unexpected " + yyTokname(lookAhead)
+
+	// To match Bison, suggest at most four expected tokens.
+	expected := make([]int, 0, 4)
+
+	// Look for shiftable tokens.
+	base := yyPact[state]
+	for tok := TOKSTART; tok-1 < len(yyToknames); tok++ {
+		if n := base + tok; n >= 0 && n < yyLast && yyChk[yyAct[n]] == tok {
+			if len(expected) == cap(expected) {
+				return res
+			}
+			expected = append(expected, tok)
+		}
+	}
+
+	if yyDef[state] == -2 {
+		i := 0
+		for yyExca[i] != -1 || yyExca[i+1] != state {
+			i += 2
+		}
+
+		// Look for tokens that we accept or reduce.
+		for i += 2; yyExca[i] >= 0; i += 2 {
+			tok := yyExca[i]
+			if tok < TOKSTART || yyExca[i+1] == 0 {
+				continue
+			}
+			if len(expected) == cap(expected) {
+				return res
+			}
+			expected = append(expected, tok)
+		}
+
+		// If the default action is to accept or reduce, give up.
+		if yyExca[i+1] != 0 {
+			return res
+		}
+	}
+
+	for i, tok := range expected {
+		if i == 0 {
+			res += ", expecting "
+		} else {
+			res += " or "
+		}
+		res += yyTokname(tok)
+	}
+	return res
+}
+
+func yylex1(lex yyLexer, lval *yySymType) (char, token int) {
+	token = 0
+	char = lex.Lex(lval)
 	if char <= 0 {
-		c = yyTok1[0]
+		token = yyTok1[0]
 		goto out
 	}
 	if char < len(yyTok1) {
-		c = yyTok1[char]
+		token = yyTok1[char]
 		goto out
 	}
 	if char >= yyPrivate {
 		if char < yyPrivate+len(yyTok2) {
-			c = yyTok2[char-yyPrivate]
+			token = yyTok2[char-yyPrivate]
 			goto out
 		}
 	}
 	for i := 0; i < len(yyTok3); i += 2 {
-		c = yyTok3[i+0]
-		if c == char {
-			c = yyTok3[i+1]
+		token = yyTok3[i+0]
+		if token == char {
+			token = yyTok3[i+1]
 			goto out
 		}
 	}
 
 out:
-	if c == 0 {
-		c = yyTok2[1] /* unknown char */
+	if token == 0 {
+		token = yyTok2[1] /* unknown char */
 	}
 	if yyDebug >= 3 {
-		__yyfmt__.Printf("lex %s(%d)\n", yyTokname(c), uint(char))
+		__yyfmt__.Printf("lex %s(%d)\n", yyTokname(token), uint(char))
 	}
-	return c
+	return char, token
 }
 
 func yyParse(yylex yyLexer) int {
+	return yyNewParser().Parse(yylex)
+}
+
+func (yyrcvr *yyParserImpl) Parse(yylex yyLexer) int {
 	var yyn int
-	var yylval yySymType
 	var yyVAL yySymType
-	yyS := make([]yySymType, yyMaxDepth)
+	var yyDollar []yySymType
+	_ = yyDollar // silence set and not used
+	yyS := yyrcvr.stack[:]
 
 	Nerrs := 0   /* number of errors */
 	Errflag := 0 /* error recovery flag */
 	yystate := 0
-	yychar := -1
+	yyrcvr.char = -1
+	yytoken := -1 // yyrcvr.char translated into internal numbering
+	defer func() {
+		// Make sure we report no lookahead when not parsing.
+		yystate = -1
+		yyrcvr.char = -1
+		yytoken = -1
+	}()
 	yyp := -1
 	goto yystack
 
@@ -263,7 +381,7 @@ ret1:
 yystack:
 	/* put a state and value onto the stack */
 	if yyDebug >= 4 {
-		__yyfmt__.Printf("char %v in %v\n", yyTokname(yychar), yyStatname(yystate))
+		__yyfmt__.Printf("char %v in %v\n", yyTokname(yytoken), yyStatname(yystate))
 	}
 
 	yyp++
@@ -280,17 +398,18 @@ yynewstate:
 	if yyn <= yyFlag {
 		goto yydefault /* simple state */
 	}
-	if yychar < 0 {
-		yychar = yylex1(yylex, &yylval)
+	if yyrcvr.char < 0 {
+		yyrcvr.char, yytoken = yylex1(yylex, &yyrcvr.lval)
 	}
-	yyn += yychar
+	yyn += yytoken
 	if yyn < 0 || yyn >= yyLast {
 		goto yydefault
 	}
 	yyn = yyAct[yyn]
-	if yyChk[yyn] == yychar { /* valid shift */
-		yychar = -1
-		yyVAL = yylval
+	if yyChk[yyn] == yytoken { /* valid shift */
+		yyrcvr.char = -1
+		yytoken = -1
+		yyVAL = yyrcvr.lval
 		yystate = yyn
 		if Errflag > 0 {
 			Errflag--
@@ -302,8 +421,8 @@ yydefault:
 	/* default state action */
 	yyn = yyDef[yystate]
 	if yyn == -2 {
-		if yychar < 0 {
-			yychar = yylex1(yylex, &yylval)
+		if yyrcvr.char < 0 {
+			yyrcvr.char, yytoken = yylex1(yylex, &yyrcvr.lval)
 		}
 
 		/* look through exception table */
@@ -316,7 +435,7 @@ yydefault:
 		}
 		for xi += 2; ; xi += 2 {
 			yyn = yyExca[xi+0]
-			if yyn < 0 || yyn == yychar {
+			if yyn < 0 || yyn == yytoken {
 				break
 			}
 		}
@@ -329,11 +448,11 @@ yydefault:
 		/* error ... attempt to resume parsing */
 		switch Errflag {
 		case 0: /* brand new error */
-			yylex.Error("syntax error")
+			yylex.Error(yyErrorMessage(yystate, yytoken))
 			Nerrs++
 			if yyDebug >= 1 {
 				__yyfmt__.Printf("%s", yyStatname(yystate))
-				__yyfmt__.Printf(" saw %s\n", yyTokname(yychar))
+				__yyfmt__.Printf(" saw %s\n", yyTokname(yytoken))
 			}
 			fallthrough
 
@@ -361,12 +480,13 @@ yydefault:
 
 		case 3: /* no shift yet; clobber input char */
 			if yyDebug >= 2 {
-				__yyfmt__.Printf("error recovery discards %s\n", yyTokname(yychar))
+				__yyfmt__.Printf("error recovery discards %s\n", yyTokname(yytoken))
 			}
-			if yychar == yyEofCode {
+			if yytoken == yyEofCode {
 				goto ret1
 			}
-			yychar = -1
+			yyrcvr.char = -1
+			yytoken = -1
 			goto yynewstate /* try again in the same state */
 		}
 	}
@@ -381,6 +501,13 @@ yydefault:
 	_ = yypt // guard against "declared and not used"
 
 	yyp -= yyR2[yyn]
+	// yyp is now the index of $0. Perform the default action. Iff the
+	// reduced production is ε, $1 is possibly out of range.
+	if yyp+1 >= len(yyS) {
+		nyys := make([]yySymType, len(yyS)*2)
+		copy(nyys, yyS)
+		yyS = nyys
+	}
 	yyVAL = yyS[yyp+1]
 
 	/* consult goto table to find next state */
@@ -400,210 +527,246 @@ yydefault:
 	switch yynt {
 
 	case 1:
-		//line parser.go.y:66
+		yyDollar = yyS[yypt-8 : yypt+1]
+		//line ./parser.go.y:71
 		{
-	        //pp.Println("classDiagram")
+			//pp.Println("classDiagram")
 
-	        namespaces := yyS[yypt-3].namespaces
-	        classes := yyS[yypt-2].classes
-	
-	        yyVAL.classDiagram = CreateClassDiagram(wordsToString(yyS[yypt-5].words), namespaces, classes, yyS[yypt-1].relations)
-	
-	        yylex.(*Lexer).Result = yyVAL.classDiagram
-	    }
+			namespaces := yyDollar[4].namespaces
+			classes := yyDollar[5].classes
+			notes := yyDollar[6].notes
+
+			yyVAL.classDiagram = CreateClassDiagram(wordsToString(yyDollar[2].words), namespaces, classes, notes, yyDollar[7].relations)
+
+			yylex.(*Lexer).Result = yyVAL.classDiagram
+		}
 	case 2:
-		//line parser.go.y:79
+		yyDollar = yyS[yypt-0 : yypt+1]
+		//line ./parser.go.y:85
 		{
-	        yyVAL.classes = []*Class{}
-	    }
+			yyVAL.classes = []*Class{}
+		}
 	case 3:
-		//line parser.go.y:83
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line ./parser.go.y:89
 		{
-	        yyVAL.classes = []*Class{yyS[yypt-0].class}
-	    }
+			yyVAL.classes = []*Class{yyDollar[1].class}
+		}
 	case 4:
-		//line parser.go.y:87
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line ./parser.go.y:93
 		{
-	        yyVAL.classes = append(yyS[yypt-1].classes, yyS[yypt-0].class)
-	    }
+			yyVAL.classes = append(yyDollar[1].classes, yyDollar[2].class)
+		}
 	case 5:
-		//line parser.go.y:93
+		yyDollar = yyS[yypt-0 : yypt+1]
+		//line ./parser.go.y:99
 		{
-	        yyVAL.fields = Fields{}
-	    }
+			yyVAL.notes = []*Note{}
+		}
 	case 6:
-		//line parser.go.y:97
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line ./parser.go.y:103
 		{
-	        fields := Fields{CreateFieldFromString(wordsToString(yyS[yypt-1].words))}
-	        yyVAL.fields = fields
-	    }
+			yyVAL.notes = []*Note{yyDollar[1].note}
+		}
 	case 7:
-		//line parser.go.y:102
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line ./parser.go.y:107
 		{
-	        field := CreateFieldFromString(wordsToString(yyS[yypt-1].words))
-	        yyS[yypt-2].fields = append(yyS[yypt-2].fields, field)
-	        yyVAL.fields = yyS[yypt-2].fields
-	    }
+			yyVAL.notes = append(yyDollar[1].notes, yyDollar[2].note)
+		}
 	case 8:
-		//line parser.go.y:110
+		yyDollar = yyS[yypt-0 : yypt+1]
+		//line ./parser.go.y:113
 		{
-	        yyVAL.methods = Methods{}
-	    }
+			yyVAL.fields = Fields{}
+		}
 	case 9:
-		//line parser.go.y:114
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line ./parser.go.y:117
 		{
-	        methods := Methods{CreateMethodFromString(wordsToString(yyS[yypt-1].words))}
-	        yyVAL.methods = methods
-	    }
+			fields := Fields{CreateFieldFromString(wordsToString(yyDollar[1].words))}
+			yyVAL.fields = fields
+		}
 	case 10:
-		//line parser.go.y:119
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line ./parser.go.y:122
 		{
-	        method := CreateMethodFromString(wordsToString(yyS[yypt-1].words))
-	        yyS[yypt-2].methods = append(yyS[yypt-2].methods, method)
-	        yyVAL.methods = yyS[yypt-2].methods
-	    }
+			field := CreateFieldFromString(wordsToString(yyDollar[2].words))
+			yyDollar[1].fields = append(yyDollar[1].fields, field)
+			yyVAL.fields = yyDollar[1].fields
+		}
 	case 11:
-		//line parser.go.y:127
+		yyDollar = yyS[yypt-0 : yypt+1]
+		//line ./parser.go.y:130
 		{
-	        //pp.Println("class")
-        stereotype := yyS[yypt-5].classMetaDatas["stereotype"]
-	
-	        yyVAL.class = CreateClass(stereotype, wordsToString(yyS[yypt-7].words), yyS[yypt-3].fields, yyS[yypt-1].methods)
-	
-	        id := yyS[yypt-5].classMetaDatas["id"]
-	        yyVAL.class.SetIdent(id)
-	
-	        yylex.(*Lexer).Result = yyVAL.class
-	    }
+			yyVAL.methods = Methods{}
+		}
 	case 12:
-		yyVAL.word = yyS[yypt-0].word
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line ./parser.go.y:134
+		{
+			methods := Methods{CreateMethodFromString(wordsToString(yyDollar[1].words))}
+			yyVAL.methods = methods
+		}
 	case 13:
-		//line parser.go.y:148
+		yyDollar = yyS[yypt-3 : yypt+1]
+		//line ./parser.go.y:139
 		{
-	        yyVAL.classMetaDatas = map[string]string{}
-	    }
+			method := CreateMethodFromString(wordsToString(yyDollar[2].words))
+			yyDollar[1].methods = append(yyDollar[1].methods, method)
+			yyVAL.methods = yyDollar[1].methods
+		}
 	case 14:
-		//line parser.go.y:152
+		yyDollar = yyS[yypt-9 : yypt+1]
+		//line ./parser.go.y:147
 		{
-	        yyVAL.classMetaDatas = map[string]string{wordsToString(yyS[yypt-3].words):wordsToString(yyS[yypt-1].words)}
-	    }
-	case 15:
-		//line parser.go.y:156
-		{
-	        yyVAL.classMetaDatas[wordsToString(yyS[yypt-3].words)] = wordsToString(yyS[yypt-1].words)
-	    }
-	case 16:
-		//line parser.go.y:162
-		{
-	        yyVAL.namespaces = []*Namespace{}
-	    }
-	case 17:
-		//line parser.go.y:166
-		{
-	        yyVAL.namespaces = []*Namespace{yyS[yypt-0].namespace}
-	    }
-	case 18:
-		//line parser.go.y:170
-		{
-	        yyVAL.namespaces = append(yyS[yypt-1].namespaces, yyS[yypt-0].namespace)
-	    }
-	case 19:
-		//line parser.go.y:176
-		{
-	        //pp.Println("namespace")
+			//pp.Println("class")
+			stereotype := yyDollar[4].classMetaDatas["stereotype"]
 
-	        yyVAL.namespace = CreateNamespace(wordsToString(yyS[yypt-4].words), yyS[yypt-1].classes, yyS[yypt-2].namespaces)
-	
-	        yylex.(*Lexer).Result = yyVAL.namespace
-	    }
+			yyVAL.class = CreateClass(stereotype, wordsToString(yyDollar[2].words), yyDollar[6].fields, yyDollar[8].methods)
+
+			id := yyDollar[4].classMetaDatas["id"]
+			yyVAL.class.SetIdent(id)
+
+			yylex.(*Lexer).Result = yyVAL.class
+		}
+	case 15:
+		yyDollar = yyS[yypt-5 : yypt+1]
+		//line ./parser.go.y:161
+		{
+			//pp.Println("note")
+			yyVAL.note = CreateNote(wordsToString(yyDollar[2].words), wordsToString(yyDollar[4].words))
+
+			yylex.(*Lexer).Result = yyVAL.note
+		}
+	case 17:
+		yyDollar = yyS[yypt-0 : yypt+1]
+		//line ./parser.go.y:177
+		{
+			yyVAL.classMetaDatas = map[string]string{}
+		}
+	case 18:
+		yyDollar = yyS[yypt-4 : yypt+1]
+		//line ./parser.go.y:181
+		{
+			yyVAL.classMetaDatas = map[string]string{wordsToString(yyDollar[1].words): wordsToString(yyDollar[3].words)}
+		}
+	case 19:
+		yyDollar = yyS[yypt-5 : yypt+1]
+		//line ./parser.go.y:185
+		{
+			yyVAL.classMetaDatas[wordsToString(yyDollar[2].words)] = wordsToString(yyDollar[4].words)
+		}
 	case 20:
-		//line parser.go.y:186
+		yyDollar = yyS[yypt-0 : yypt+1]
+		//line ./parser.go.y:191
 		{
-	        yyVAL.relations = []*Relation{}
-	    }
+			yyVAL.namespaces = []*Namespace{}
+		}
 	case 21:
-		//line parser.go.y:190
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line ./parser.go.y:195
 		{
-	        yyVAL.relations = []*Relation{yyS[yypt-0].relation}
-	    }
+			yyVAL.namespaces = []*Namespace{yyDollar[1].namespace}
+		}
 	case 22:
-		//line parser.go.y:194
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line ./parser.go.y:199
 		{
-	        relations := append(yyS[yypt-1].relations, yyS[yypt-0].relation)
-	
-	        yyVAL.relations = relations
-	
-	        yylex.(*Lexer).Result = yyVAL.relations
-	    }
+			yyVAL.namespaces = append(yyDollar[1].namespaces, yyDollar[2].namespace)
+		}
 	case 23:
-		yyVAL.relation = yyS[yypt-0].relation
+		yyDollar = yyS[yypt-7 : yypt+1]
+		//line ./parser.go.y:205
+		{
+			//pp.Println("namespace")
+
+			yyVAL.namespace = CreateNamespace(wordsToString(yyDollar[2].words), yyDollar[5].classes, yyDollar[6].notes, yyDollar[4].namespaces)
+
+			yylex.(*Lexer).Result = yyVAL.namespace
+		}
 	case 24:
-		yyVAL.relation = yyS[yypt-0].relation
+		yyDollar = yyS[yypt-0 : yypt+1]
+		//line ./parser.go.y:215
+		{
+			yyVAL.relations = []*Relation{}
+		}
 	case 25:
-		yyVAL.relation = yyS[yypt-0].relation
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line ./parser.go.y:219
+		{
+			yyVAL.relations = []*Relation{yyDollar[1].relation}
+		}
 	case 26:
-		//line parser.go.y:209
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line ./parser.go.y:223
 		{
-	        yyVAL.relation = CreateRelation("", RELATION_NORMAL, wordsToString(yyS[yypt-4].words), wordsToString(yyS[yypt-1].words), "", "")
-	    }
-	case 27:
-		//line parser.go.y:215
-		{
-	        yyVAL.relation = CreateRelation("", RELATION_INHERIT, wordsToString(yyS[yypt-5].words), wordsToString(yyS[yypt-1].words), "", "")
-	    }
-	case 28:
-		//line parser.go.y:221
-		{
-	        yyVAL.relation = CreateRelation("", RELATION_IMPLEMENT, wordsToString(yyS[yypt-5].words), wordsToString(yyS[yypt-1].words), "", "")
-	    }
-	case 29:
-		//line parser.go.y:228
-		{
-	        tokens := []*Token{yyS[yypt-0].word}
-	
-	        yyVAL.words = tokens
-	
-	        yylex.(*Lexer).Result = yyVAL.words
-	    }
+			relations := append(yyDollar[1].relations, yyDollar[2].relation)
+
+			yyVAL.relations = relations
+
+			yylex.(*Lexer).Result = yyVAL.relations
+		}
 	case 30:
-		//line parser.go.y:236
+		yyDollar = yyS[yypt-5 : yypt+1]
+		//line ./parser.go.y:238
 		{
-	        tokens := []*Token{yyS[yypt-0].word}
-	
-	        yyVAL.words = tokens
-	
-	        yylex.(*Lexer).Result = yyVAL.words
-	    }
+			yyVAL.relation = CreateRelation("", RELATION_NORMAL, wordsToString(yyDollar[1].words), wordsToString(yyDollar[4].words), "", "")
+		}
 	case 31:
-		//line parser.go.y:244
+		yyDollar = yyS[yypt-6 : yypt+1]
+		//line ./parser.go.y:244
 		{
-	        tokens := append(yyS[yypt-1].words, yyS[yypt-0].word)
-	
-	        yyVAL.words = tokens
-	
-	        yylex.(*Lexer).Result = yyVAL.words
-	    }
+			yyVAL.relation = CreateRelation("", RELATION_INHERIT, wordsToString(yyDollar[1].words), wordsToString(yyDollar[5].words), "", "")
+		}
 	case 32:
-		//line parser.go.y:251
+		yyDollar = yyS[yypt-6 : yypt+1]
+		//line ./parser.go.y:250
 		{
-	        tokens := append(yyS[yypt-1].words, yyS[yypt-0].word)
-	
-	        yyVAL.words = tokens
-	
-	        yylex.(*Lexer).Result = yyVAL.words
-	    }
+			yyVAL.relation = CreateRelation("", RELATION_IMPLEMENT, wordsToString(yyDollar[1].words), wordsToString(yyDollar[5].words), "", "")
+		}
 	case 33:
-		yyVAL.word = yyS[yypt-0].word
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line ./parser.go.y:257
+		{
+			tokens := []*Token{yyDollar[1].word}
+
+			yyVAL.words = tokens
+
+			yylex.(*Lexer).Result = yyVAL.words
+		}
 	case 34:
-		yyVAL.word = yyS[yypt-0].word
+		yyDollar = yyS[yypt-1 : yypt+1]
+		//line ./parser.go.y:265
+		{
+			tokens := []*Token{yyDollar[1].word}
+
+			yyVAL.words = tokens
+
+			yylex.(*Lexer).Result = yyVAL.words
+		}
 	case 35:
-		yyVAL.word = yyS[yypt-0].word
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line ./parser.go.y:273
+		{
+			tokens := append(yyDollar[1].words, yyDollar[2].word)
+
+			yyVAL.words = tokens
+
+			yylex.(*Lexer).Result = yyVAL.words
+		}
 	case 36:
-		yyVAL.word = yyS[yypt-0].word
-	case 37:
-		yyVAL.word = yyS[yypt-0].word
-	case 38:
-		yyVAL.word = yyS[yypt-0].word
+		yyDollar = yyS[yypt-2 : yypt+1]
+		//line ./parser.go.y:280
+		{
+			tokens := append(yyDollar[1].words, yyDollar[2].word)
+
+			yyVAL.words = tokens
+
+			yylex.(*Lexer).Result = yyVAL.words
+		}
 	}
 	goto yystack /* stack new state and value */
 }

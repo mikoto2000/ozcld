@@ -47,6 +47,8 @@ func (l *Lexer) Lex(lval *yySymType) int {
 		token = LABEL_CLD
 	} else if l.TokenText() == "class" {
 		token = LABEL_CLASS
+	} else if l.TokenText() == "note" {
+		token = LABEL_NOTE
 	} else if l.TokenText() == "=" {
 		token = EQUAL
 	} else if l.TokenText() == "namespace" {

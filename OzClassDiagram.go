@@ -165,22 +165,46 @@ func (this *Class) AddMethodFromString(def string) {
 	this.methods = append(this.methods, method)
 }
 
+// ノート
+type Note struct {
+	name       string
+	note       string
+}
+
+// 各オブジェクトからノートを作成する
+func CreateNote(name string, note string) *Note {
+	return &Note{name, note}
+}
+
+// Dot 形式の文字列を返却する
+func (this *Note) ToDot() string {
+	// 必要な長さのスライスを作成
+	defs := []string{this.name, " [label = \"{", this.note, "}\"];"}
+
+	// 文字列返却
+	return strings.Join(defs, "")
+}
+
 // 名前空間(パッケージ)
 type Namespace struct {
 	name       string
 	classes    []*Class
+	notes      []*Note
 	namespaces []*Namespace
 }
 
 // Namespace を作成する
-func CreateNamespace(name string, classes []*Class, namespaces []*Namespace) *Namespace {
+func CreateNamespace(name string, classes []*Class, notes []*Note, namespaces []*Namespace) *Namespace {
 	if classes == nil {
 		classes = []*Class{}
+	}
+	if notes == nil {
+		notes = []*Note{}
 	}
 	if namespaces == nil {
 		namespaces = []*Namespace{}
 	}
-	this := &Namespace{name, classes, namespaces}
+	this := &Namespace{name, classes, notes, namespaces}
 
 	return this
 }
@@ -307,12 +331,13 @@ type ClassDiagram struct {
 	name       string
 	namespaces []*Namespace
 	classes    []*Class
+	notes      []*Note
 	relations  []*Relation
 }
 
 // クラス図作成
-func CreateClassDiagram(name string, namespaces []*Namespace, classes []*Class, relations []*Relation) *ClassDiagram {
-	return &ClassDiagram{name, namespaces, classes, relations}
+func CreateClassDiagram(name string, namespaces []*Namespace, classes []*Class, notes []*Note, relations []*Relation) *ClassDiagram {
+	return &ClassDiagram{name, namespaces, classes, notes, relations}
 }
 
 // Dot 形式の文字列を返却する
@@ -325,6 +350,10 @@ func (this *ClassDiagram) ToDot() string {
 	}
 
 	for _, v := range this.classes {
+		defs = append(defs, v.ToDot())
+	}
+
+	for _, v := range this.notes {
 		defs = append(defs, v.ToDot())
 	}
 

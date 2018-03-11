@@ -5,7 +5,9 @@ package ozcld
 %union{
     classDiagram *ClassDiagram
     class *Class
+    note *Note
     classes []*Class
+    notes []*Note
     classMetaDatas map[string]string
     fields Fields
     methods Methods
@@ -27,7 +29,9 @@ package ozcld
 
 %type<classDiagram> classDiagram
 %type<class> class
+%type<note> note
 %type<classes> classes
+%type<notes> notes
 
 %type<classMetaDatas> classMetaDatas
 %type<fields> fields
@@ -48,6 +52,7 @@ package ozcld
 
 %token<word> LABEL_CLD
 %token<word> LABEL_CLASS
+%token<word> LABEL_NOTE
 %token<word> LABEL_NAMESPACE
 %token<word> START_BLOCK
 %token<word> END_BLOCK
@@ -62,14 +67,15 @@ package ozcld
 %%
 
 classDiagram
-    : LABEL_CLD words START_BLOCK namespaces classes relations END_BLOCK
+    : LABEL_CLD words START_BLOCK namespaces classes notes relations END_BLOCK
     {
         //pp.Println("classDiagram")
 
         namespaces := $4
         classes := $5
+        notes := $6
 
-        $$ = CreateClassDiagram(wordsToString($2), namespaces, classes, $6)
+        $$ = CreateClassDiagram(wordsToString($2), namespaces, classes, notes, $7)
 
         yylex.(*Lexer).Result = $$
     }
@@ -84,6 +90,20 @@ classes
         $$ = []*Class{$1}
     }
     | classes class
+    {
+        $$ = append($1, $2)
+    }
+
+notes
+    :
+    {
+        $$ = []*Note{}
+    }
+    | note
+    {
+        $$ = []*Note{$1}
+    }
+    | notes note
     {
         $$ = append($1, $2)
     }
@@ -136,6 +156,15 @@ class
         yylex.(*Lexer).Result = $$
     }
 
+note
+    : LABEL_NOTE words START_BLOCK words END_BLOCK
+    {
+        //pp.Println("note")
+        $$ = CreateNote(wordsToString($2), wordsToString($4))
+
+        yylex.(*Lexer).Result = $$
+    }
+
 divisionMarker
     : EQUAL EQUAL
 
@@ -172,11 +201,11 @@ namespaces
     }
 
 namespace
-    : LABEL_NAMESPACE words START_BLOCK namespaces classes END_BLOCK
+    : LABEL_NAMESPACE words START_BLOCK namespaces classes notes END_BLOCK
     {
         //pp.Println("namespace")
 
-        $$ = CreateNamespace(wordsToString($2), $5, $4)
+        $$ = CreateNamespace(wordsToString($2), $5, $6, $4)
 
         yylex.(*Lexer).Result = $$
     }
@@ -261,6 +290,7 @@ validSigne
     | HYPHEN
     | COLON
     | LABEL_CLASS
+    | LABEL_NOTE
     | LABEL_NAMESPACE
     | LABEL_CLD
 %%
