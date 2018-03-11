@@ -179,7 +179,7 @@ func CreateNote(name string, note string) *Note {
 // Dot 形式の文字列を返却する
 func (this *Note) ToDot() string {
 	// 必要な長さのスライスを作成
-	defs := []string{this.name, " [label = \"{", this.note, "}\"];"}
+	defs := []string{this.name, " [shape = note; label = \"", this.note, "\"];"}
 
 	// 文字列返却
 	return strings.Join(defs, "")
