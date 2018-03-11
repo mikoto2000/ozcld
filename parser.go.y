@@ -48,6 +48,7 @@ package ozcld
 %type<relation> relation_normal
 %type<relation> relation_inherit
 %type<relation> relation_implement
+%type<relation> relation_note
 %type<relations> relations
 
 %token<word> LABEL_CLD
@@ -232,6 +233,7 @@ relation
     : relation_normal
     | relation_inherit
     | relation_implement
+    | relation_note
 
 relation_normal
     : words HYPHEN GT words EOM
@@ -249,6 +251,12 @@ relation_implement
     : words DOT PIPE GT words EOM
     {
         $$ = CreateRelation("", RELATION_IMPLEMENT, wordsToString($1), wordsToString($5), "", "")
+    }
+
+relation_note
+    : words DOT DOT words EOM
+    {
+        $$ = CreateRelation("", RELATION_NOTE, wordsToString($1), wordsToString($4), "", "")
     }
 
 // 単語(WORD)の繰り返しルール

@@ -1,7 +1,7 @@
 package main
 
 import (
-	cld "github.com/mikoto2000/ozcld"
+	cld "../../../ozcld"
 	"flag"
 	"fmt"
 	"os"

@@ -268,34 +268,54 @@ const (
 	RELATION_IMPLEMENT
 	RELATION_AGGREGATION
 	RELATION_COMPOSITION
+	RELATION_NOTE
 )
 
-func (this *Relation) getEdgeStyles() (style string, arrowhead string) {
+func (this *Relation) getEdgeStyles() (style string, arrowhead string, constraint bool) {
 
 	if this.relationType == RELATION_INHERIT {
 		style = "solid"
 		arrowhead = "onormal"
+		constraint = true
 	} else if this.relationType == RELATION_IMPLEMENT {
 		style = "dashed"
 		arrowhead = "onormal"
+		constraint = true
 	} else if this.relationType == RELATION_AGGREGATION {
 		style = "solid"
 		arrowhead = "open"
+		constraint = true
 	} else if this.relationType == RELATION_COMPOSITION {
 		style = "solid"
 		arrowhead = "open"
+		constraint = true
+	} else if this.relationType == RELATION_NOTE {
+		style = "dotted"
+		arrowhead = "none"
+		constraint = false
+	} else {
+		style = ""
+		arrowhead = ""
+		constraint = true
 	}
 
-	return style, arrowhead
+	return style, arrowhead, constraint
 }
 
 // Dot 形式の文字列を返却する
 func (this *Relation) ToDot() string {
 
-	style, arrowhead := this.getEdgeStyles()
+	style, arrowhead, constraint := this.getEdgeStyles()
 
 	// 基本
-	base := []string{"edge [style = \"" + style + "\", arrowhead = \"" + arrowhead + "\"];\n"}
+	var constraintStr string
+	if constraint {
+		constraintStr = "constraint = true"
+	} else {
+		constraintStr = "constraint = false"
+	}
+
+	base := []string{"edge [style = \"" + style + "\", arrowhead = \"" + arrowhead + "\", " + constraintStr + " ];\n"}
 	base = append(base, this.fromClass+" -> "+this.toClass)
 
 	// 詳細
